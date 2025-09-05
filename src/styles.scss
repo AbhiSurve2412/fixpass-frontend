@@ -1,1 +1,21 @@
 /* You can add global styles to this file, and also import other style files */
+@use 'styles/theme' as *;
+
+* {
+    margin: 0;
+    padding: 0;
+  }
+  
+  html , body {
+    background-color: var(--fixpass-bg);
+    
+    .primary-btn {
+      background-color: var(--fixpass-primary);
+      color: var(--fixpass-white);
+    }
+    
+    .secondary-btn {
+      background-color: var(--fixpass-secondary);
+      color: var(--fixpass-white);
+    }
+  }

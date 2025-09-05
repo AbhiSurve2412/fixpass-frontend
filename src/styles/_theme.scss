@@ -1,0 +1,51 @@
+
+// Base Brand Palette
+$fixpass-primary:   #D6A99D; 
+$fixpass-secondary: #9CAFAA; 
+$fixpass-accent:    #D6DAC8; 
+$fixpass-bg:        #FBF3D5; 
+
+// Neutrals
+$fixpass-white:     #FFFFFF;
+$fixpass-black:     #111827; 
+$fixpass-gray-100:  #F3F4F6;
+$fixpass-gray-300:  #D1D5DB;
+$fixpass-gray-600:  #4B5563;
+
+// Alerts
+$fixpass-success:  #22C55E;
+$fixpass-warning:  #F59E0B;
+$fixpass-error:    #DC2626;
+$fixpass-info:     #3B82F6;
+
+// Text colors
+$fixpass-text-primary:   $fixpass-black;
+$fixpass-text-secondary: $fixpass-secondary;
+$fixpass-text-muted:     $fixpass-gray-600;
+
+
+// ------------------------------
+// Expose as CSS variables 
+// ------------------------------
+:root {
+  --fixpass-primary:   #{$fixpass-primary};
+  --fixpass-secondary: #{$fixpass-secondary};
+  --fixpass-accent:    #{$fixpass-accent};
+  --fixpass-bg:        #{$fixpass-bg};
+
+  --fixpass-white:     #{$fixpass-white};
+  --fixpass-black:     #{$fixpass-black};
+  --fixpass-gray-100:  #{$fixpass-gray-100};
+  --fixpass-gray-300:  #{$fixpass-gray-300};
+  --fixpass-gray-600:  #{$fixpass-gray-600};
+
+  --fixpass-text-primary:   #{$fixpass-text-primary};
+  --fixpass-text-secondary: #{$fixpass-text-secondary};
+  --fixpass-text-muted:     #{$fixpass-text-muted};
+
+  --fixpass-success:  #{$fixpass-success};
+  --fixpass-warning:  #{$fixpass-warning};
+  --fixpass-error:    #{$fixpass-error};
+  --fixpass-info:     #{$fixpass-info};
+}
+
