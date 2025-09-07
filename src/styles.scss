@@ -48,6 +48,11 @@ body {
     color: var(--fixpass-error) !important;
   }
 
+  .mat-mdc-option.mdc-list-item{
+    background: transparent;
+    backdrop-filter: blur(2rem);
+  }
+
   .primary-btn {
     background-color: var(--fixpass-primary);
     color: var(--fixpass-white);

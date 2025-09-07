@@ -15,7 +15,7 @@
       <button mat-button [class.active]="activeForm === 'signup'" (click)="activeForm = 'signup'">
         Signup
       </button>
-      <button mat-button  [class.active]="activeForm === 'login'" (click)="activeForm = 'login'">Login</button>
+      <button mat-button [class.active]="activeForm === 'login'" (click)="activeForm = 'login'">Login</button>
     </div>
     @if (activeForm === 'login') {
     <form [formGroup]="loginForm" (ngSubmit)="onLoginSubmit()">
@@ -33,8 +33,7 @@
         <mat-form-field class="full-width">
           <mat-label>Password</mat-label>
           <input matInput type="password" formControlName="password" required />
-          @if (loginForm.get('password')?.hasError('required') &&
-          loginForm.get('password')?.touched) {
+          @if (loginForm.get('password')?.hasError('required') && loginForm.get('password')?.touched) {
           <mat-error>Password is required</mat-error>
           }
         </mat-form-field>
@@ -68,51 +67,81 @@
         <mat-form-field class="full-width">
           <mat-label>Password</mat-label>
           <input matInput type="password" formControlName="password" required />
-          @if (signupForm.get('password')?.hasError('required') &&
-          signupForm.get('password')?.touched) {
+          @if (signupForm.get('password')?.hasError('required') && signupForm.get('password')?.touched) {
           <mat-error>Password is required</mat-error>
           }
         </mat-form-field>
 
         <mat-form-field class="full-width">
           <mat-label>College Name</mat-label>
-          <input matInput formControlName="college" required />
-          @if (signupForm.get('college')?.hasError('required') &&
-          signupForm.get('college')?.touched) {
-          <mat-error>College name is required</mat-error>
+          <input matInput type="text" formControlName="college" [matAutocomplete]="autoCollege" required />
+          <mat-autocomplete #autoCollege="matAutocomplete" [displayWith]="displayCollegeFn">
+            @if ((filteredColleges | async)?.length === 0) {
+              <mat-option disabled>No colleges found</mat-option>
+            }
+            @for (college of filteredColleges | async; track college.collegeId) {
+              <mat-option [value]="college">
+                {{ college.name }}
+              </mat-option>
+            }
+          </mat-autocomplete>
+          @if (signupForm.get('college')?.hasError('required') && signupForm.get('college')?.touched) {
+            <mat-error>College name is required</mat-error>
           }
         </mat-form-field>
 
         <mat-form-field class="full-width">
-          <mat-label>University Name</mat-label>
-          <input matInput formControlName="university" required />
-          @if (signupForm.get('university')?.hasError('required') &&
-          signupForm.get('university')?.touched) {
-          <mat-error>University name is required</mat-error>
+          <mat-label>University</mat-label>
+          <input matInput type="text" formControlName="university" [matAutocomplete]="autoUniversity" required />
+          <mat-autocomplete #autoUniversity="matAutocomplete" [displayWith]="displayUniversityFn">
+            @if ((filteredUniversities | async)?.length === 0) {
+              <mat-option disabled>No universities found</mat-option>
+            }
+            @for (university of filteredUniversities | async; track university.universityId) {
+              <mat-option [value]="university">
+                {{ university.name }}
+              </mat-option>
+            }
+          </mat-autocomplete>
+          @if (signupForm.get('university')?.hasError('required') && signupForm.get('university')?.touched) {
+            <mat-error>University is required</mat-error>
           }
         </mat-form-field>
 
         <div class="two-fields">
           <mat-form-field class="full-width">
             <mat-label>Branch</mat-label>
-            <input matInput formControlName="branch" required />
-            @if (signupForm.get('branch')?.hasError('required') &&
-            signupForm.get('branch')?.touched) {
-            <mat-error>Branch is required</mat-error>
+            <input matInput type="text" formControlName="branch" [matAutocomplete]="autoBranch" required />
+            <mat-autocomplete #autoBranch="matAutocomplete" [displayWith]="displayBranchFn">
+              @if ((filteredBranches | async)?.length === 0) {
+                <mat-option disabled>No branches found</mat-option>
+              }
+              @for (branch of filteredBranches | async; track branch.branchId) {
+                <mat-option [value]="branch">
+                  {{ branch.name }}
+                </mat-option>
+              }
+            </mat-autocomplete>
+            @if (signupForm.get('branch')?.hasError('required') && signupForm.get('branch')?.touched) {
+              <mat-error>Branch is required</mat-error>
             }
           </mat-form-field>
 
           <mat-form-field class="full-width">
             <mat-label>Year</mat-label>
-            <input matInput type="number" formControlName="year" min="1" max="4" />
-            @if (signupForm.get('year')?.hasError('required') &&
-            signupForm.get('year')?.touched) {
-            <mat-error>Year is required</mat-error>
-            }
-            @if (signupForm.get('year')?.hasError('min') && signupForm.get('year')?.touched) {
-            <mat-error>Year must be at least 1</mat-error>
-            } @if (signupForm.get('year')?.hasError('max') && signupForm.get('year')?.touched) {
-            <mat-error>Year cannot be more than 4</mat-error>
+            <input matInput type="text" formControlName="year" [matAutocomplete]="autoYear" required />
+            <mat-autocomplete #autoYear="matAutocomplete" [displayWith]="displayYearFn">
+              @if ((filteredYears | async)?.length === 0) {
+                <mat-option disabled>No years found</mat-option>
+              }
+              @for (year of filteredYears | async; track year.yearId) {
+                <mat-option [value]="year">
+                  {{ year.name }}
+                </mat-option>
+              }
+            </mat-autocomplete>
+            @if (signupForm.get('year')?.hasError('required') && signupForm.get('year')?.touched) {
+              <mat-error>Year is required</mat-error>
             }
           </mat-form-field>
         </div>
