@@ -8,35 +8,59 @@
 
 html,
 body {
-  background-color: rgba($fixpass-bg, 0.5);
-
-  .primary-btn {
-    background-color: var(--fixpass-primary);
-    color: var(--fixpass-white);
-  }
-
-  .secondary-btn {
-    background-color: var(--fixpass-secondary);
-    color: var(--fixpass-white);
-  }
-
+  min-height: 100vh;
+  min-width: 100vw;
+  overflow: hidden;
+  background-color: rgba($fixpass-bg, 0.8);
   /* For all scrollbars */
   ::-webkit-scrollbar {
     width: 0.25rem;
   }
 
   ::-webkit-scrollbar-track {
-    background: var(--fixpass-bg);
+    background-color: var(--fixpass-primary);
     border-radius: 0.625rem;
   }
 
   ::-webkit-scrollbar-thumb {
-    background: var(--fixpass-secondary);
+    background-color: var(--fixpass-primary);
     border-radius: 0.625rem;
-    border: 0.125rem solid var(--fixpass-bg);
+    border: 0.125rem solid var(--fixpass-primary);
   }
 
   ::-webkit-scrollbar-thumb:hover {
     background: var(--fixpass-primary);
+  }
+
+  mat-form-field {
+    --mat-form-field-container-height: 2.18rem;
+  }
+
+  .mdc-text-field--outlined .mat-mdc-form-field-infix{
+    padding: 0.6rem;
+  }
+
+  .mat-mdc-form-field-error-wrapper{
+    padding: 0;
+  }
+
+  mat-error {
+    color: var(--fixpass-error) !important;
+  }
+
+  .primary-btn {
+    background-color: var(--fixpass-primary);
+    color: var(--fixpass-white);
+    border-radius: 0.5rem;
+  }
+
+  .secondary-btn {
+    background-color: var(--fixpass-secondary) !important;
+    color: var(--fixpass-white) !important;
+    border-radius: 0.5rem;
+  }
+
+  .full-width {
+    width: 100%;
   }
 }

@@ -1,0 +1,128 @@
+.home-container {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.information-container {
+  flex: 7;
+  background: var(--fixpass-bg);
+  padding: 2rem;
+  border-radius: 1rem;
+  color: var(--fixpass-text-primary);
+
+  h1 {
+    margin-bottom: 1rem;
+    color: var(--fixpass-primary);
+    font-size: 2rem;
+  }
+
+  p {
+    margin-bottom: 1rem;
+    line-height: 1.6;
+    font-size: 1rem;
+    color: var(--fixpass-text-secondary);
+  }
+}
+
+.form-container {
+  flex: 3;
+  background: var(--fixpass-white);
+  padding: 0 2rem 1rem 2rem;
+  border-radius: 1rem;
+  height: fit-content;
+
+  .form-switch {
+    display: flex;
+    justify-content: center;
+    padding: 0.5rem;
+    margin-bottom: 0.625rem;
+    border-bottom: solid 0.063rem var(--fixpass-gray-300);
+  }
+
+  .form-switch button {
+    position: relative;
+    font-weight: 500;
+    color: var(--fixpass-text-secondary);
+  }
+  
+  .form-switch button.active {
+    background-color: var(--fixpass-primary);
+    color: var(--fixpass-white);
+    border-radius: 0.5rem;
+  }
+  
+  .form-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+
+    .two-fields {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+  }
+
+  .form-actions {
+    display: flex;
+    margin-top: 1rem;
+    gap: 1rem;
+    justify-content: flex-end;
+  }
+}
+
+/* Tablet (768px – 1023px) */
+@media (max-width: 1023px) {
+  .home-container {
+    flex-direction: column;
+  }
+
+  .information-container,
+  .form-container {
+    flex: 1;
+    width: 94%;
+    padding: 1.5rem;
+  }
+
+  .information-container h1 {
+    font-size: 1.75rem;
+  }
+
+  .information-container p {
+    font-size: 0.95rem;
+  }
+}
+
+/* Mobile (<768px) */
+@media (max-width: 767px) {
+  .home-container {
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+
+  .information-container,
+  .form-container {
+    width:90%;
+    padding: 1rem;
+    border-radius: 0.75rem;
+  }
+
+  .information-container h1 {
+    font-size: 1.5rem;
+  }
+
+  .information-container p {
+    font-size: 0.875rem;
+    line-height: 1.4;
+  }
+
+  .form-container .form-actions {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .form-container .form-actions button {
+    width: 100%;
+  }
+}

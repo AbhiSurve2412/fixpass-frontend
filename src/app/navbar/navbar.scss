@@ -1,14 +1,17 @@
 .navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.75rem 1.5rem;
-    background-color: var(--fixpass-primary);
-    color: var(--fixpass-white);
-  
-    .navbar-logo {
-      font-size: 1.5rem;
-      font-weight: 700;
-    }
+  position: sticky;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--fixpass-primary);
+  color: var(--fixpass-white);
+  padding : 0.5rem 1rem;
+
+  .navbar-logo {
+    font-size: 1.5rem;
+    font-weight: 700;
   }
-  
+}
