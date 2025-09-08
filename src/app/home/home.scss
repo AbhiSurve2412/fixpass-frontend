@@ -1,3 +1,5 @@
+@use '../../styles/theme' as *;
+
 .home-container {
   display: flex;
   gap: 1rem;
@@ -45,13 +47,13 @@
     font-weight: 500;
     color: var(--fixpass-text-secondary);
   }
-  
+
   .form-switch button.active {
-    background-color: var(--fixpass-primary);
+    background-color: var(--fixpass-secondary);
     color: var(--fixpass-white);
     border-radius: 0.5rem;
   }
-  
+
   .form-fields {
     display: flex;
     flex-direction: column;
@@ -68,7 +70,7 @@
     display: flex;
     margin-top: 1rem;
     gap: 1rem;
-    justify-content: flex-end;
+    justify-content: center;
   }
 }
 
@@ -103,7 +105,7 @@
 
   .information-container,
   .form-container {
-    width:90%;
+    width: 90%;
     padding: 1rem;
     border-radius: 0.75rem;
   }

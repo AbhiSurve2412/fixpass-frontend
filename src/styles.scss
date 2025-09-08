@@ -36,11 +36,11 @@ body {
     --mat-form-field-container-height: 2.18rem;
   }
 
-  .mdc-text-field--outlined .mat-mdc-form-field-infix{
+  .mdc-text-field--outlined .mat-mdc-form-field-infix {
     padding: 0.6rem;
   }
 
-  .mat-mdc-form-field-error-wrapper{
+  .mat-mdc-form-field-error-wrapper {
     padding: 0;
   }
 
@@ -48,9 +48,9 @@ body {
     color: var(--fixpass-error) !important;
   }
 
-  .mat-mdc-option.mdc-list-item{
+  .mat-mdc-option.mdc-list-item {
     background: transparent;
-    backdrop-filter: blur(2rem);
+    backdrop-filter: blur(2.5rem);
   }
 
   .primary-btn {
@@ -67,5 +67,42 @@ body {
 
   .full-width {
     width: 100%;
+  }
+
+  .cdk-overlay-pane {
+    margin-top: -0.5rem !important;
+    margin-right: -0.5rem !important;
+  }
+
+  .snackbar-success {
+    background-color: var(--fixpass-success);
+    color: var(--fixpass-white);
+  }
+
+  .snackbar-error {
+    background-color: var(--fixpass-error);
+    color: var(--fixpass-white);
+  }
+
+  .snackbar-warning {
+    background-color: var(--fixpass-warning);
+    color: var(--fixpass-black);
+  }
+
+  .snackbar-info {
+    background-color: var(--fixpass-info);
+    color: var(--fixpass-white);
+  }
+
+  .spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+
+  .mat-mdc-snack-bar-container .mat-mdc-button.mat-mdc-snack-bar-action:not(:disabled) {
+    --mat-button-text-state-layer-color: transparent;
+    --mat-button-text-ripple-color: transparent;
   }
 }
