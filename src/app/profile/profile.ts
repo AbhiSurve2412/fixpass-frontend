@@ -1,4 +1,13 @@
-import { Component, inject, OnInit } from '@angular/core';
+import {
+  Component,
+  effect,
+  EventEmitter,
+  inject,
+  OnInit,
+  Output,
+  Signal,
+  signal
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -21,15 +30,14 @@ import { User } from '../state/user-state/user.model';
 import { UserActions } from '../state/user-state/user.actions';
 import { Store } from '@ngrx/store';
 import { MatIconModule } from '@angular/material/icon';
-import { getIsAuthenticated, getIsLoading } from '../state/user-state/user.selectors';
+import { getIsLoading, getLoggedInUser } from '../state/user-state/user.selectors';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { engineeringSemisters } from '../shared/constants/semesters';
 import { Semester } from '../shared/models/semester.model';
 import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
-  selector: 'app-home',
-  standalone: true,
+  selector: 'app-profile',
   imports: [
     ReactiveFormsModule,
     MatFormFieldModule,
@@ -40,16 +48,16 @@ import { toSignal } from '@angular/core/rxjs-interop';
     MatAutocompleteModule,
     CommonModule,
     MatIconModule,
+    MatProgressSpinnerModule,
     MatProgressSpinnerModule
   ],
-  templateUrl: './home.html',
-  styleUrls: ['./home.scss'],
+  templateUrl: './profile.html',
+  styleUrl: './profile.scss',
 })
-export class Home implements OnInit {
-  activeForm: 'login' | 'signup' = 'signup';
+export class Profile implements OnInit {
+  @Output() closeDrawer = new EventEmitter<void>();
 
   signupForm!: FormGroup;
-  loginForm!: FormGroup;
   private formBuilder: FormBuilder = inject(FormBuilder);
   private notificationService = inject(NotificationService);
   private store = inject(Store);
@@ -65,15 +73,22 @@ export class Home implements OnInit {
   filteredYears!: Observable<Year[]>;
   filteredColleges!: Observable<College[]>;
   filteredSemesters!: Observable<Semester[]>;
-  hidePassword : boolean = true;
 
-  isLoading$ : Observable<boolean | undefined> = this.store.select(getIsLoading);
-  isUserLoggedIn = toSignal(this.store.select(getIsAuthenticated));
-  
+  isLoading$: Observable<boolean | undefined> = this.store.select(getIsLoading);
+
+  userDetails: Signal<User | undefined> = toSignal(this.store.select(getLoggedInUser));
+  isEditMode = signal(false);
+
+  constructor() {
+    effect(() => {
+      this.patchForm();
+      this.disabeFormFields();
+    });
+  }
+
   ngOnInit() {
     this.signupForm = this.formBuilder.group({
       name: ['', Validators.required],
-      password: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       college: ['', Validators.required],
       university: ['', Validators.required],
@@ -81,75 +96,71 @@ export class Home implements OnInit {
       year: ['', [Validators.required]],
       semester: ['', [Validators.required]],
     });
-
-    this.loginForm = this.formBuilder.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required],
-    });
-
     this.handleOptionFiltering();
   }
 
-  signUpWithEmailAndPassword(){
+  disabeFormFields() {
+    if (this.isEditMode()) {
+      this.signupForm.get('email')?.enable();
+      this.signupForm.get('name')?.enable();
+      this.signupForm.get('college')?.enable();
+      this.signupForm.get('university')?.enable();
+      this.signupForm.get('branch')?.enable();
+      this.signupForm.get('year')?.enable();
+      this.signupForm.get('semester')?.enable();
+    } else {
+      this.signupForm.get('email')?.disable();
+      this.signupForm.get('name')?.disable();
+      this.signupForm.get('college')?.disable();
+      this.signupForm.get('university')?.disable();
+      this.signupForm.get('branch')?.disable();
+      this.signupForm.get('year')?.disable();
+      this.signupForm.get('semester')?.disable();
+    }
+  }  
+
+  patchForm() {
+    const user = this.userDetails();
+    if (user) {
+      this.signupForm.patchValue({
+        name: user.name,
+        email: user.email,
+        college: this.colleges.find((c) => c.collegeId === user.collegeId) || null,
+        university: this.universities.find((u) => u.universityId === user.universityId) || null,
+        branch: this.branches.find((b) => b.branchId === user.branchId) || null,
+        year: this.years.find((y) => y.yearId === user.yearId) || null,
+        semester: this.semisters.find((s) => s.semesterId === user.semesterId) || null,
+      });
+    }
+  }
+
+  updateProfile() {
     if (this.signupForm.valid) {
       const formValue = this.signupForm.value;
-      const password = formValue.password;
       const newUser: User = {
+        userId : this.userDetails()?.userId,
         name: formValue.name,
         email: formValue.email,
         collegeId: formValue.college.collegeId,
         collegeName: formValue.college.name,
-        universityId : formValue.university.universityId,
+        universityId: formValue.university.universityId,
         universityName: formValue.university.name,
         branchId: formValue.branch.branchId,
-        branchName : formValue.branch.name,
+        branchName: formValue.branch.name,
         yearId: formValue.year.yearId,
         yearName: formValue.year.name,
         semesterId: formValue.semester.semesterId,
         semesterName: formValue.semester.name
       };
-      this.store.dispatch(UserActions.signUpWithEmailAndPassword({user : newUser,password }));
+      this.store.dispatch(UserActions.updateUserProfile({user : newUser}));
+      this.isEditMode.set(false);
     } else {
-      this.notificationService.showError('Please fill all required signup fields correctly.');
+      this.notificationService.showError('Please fill all required fields correctly.');
       this.signupForm.markAllAsTouched();
     }
   }
 
-  signUpWithGoogle(isLoginForm : boolean) {
-    if (this.signupForm.valid || isLoginForm) {
-      const formValue = this.signupForm.value;
-      const newUser: User = {
-        name: formValue.name,
-        email: formValue.email,
-        collegeId: formValue.college.collegeId,
-        collegeName: formValue.college.name,
-        universityId : formValue.university.universityId,
-        universityName: formValue.university.name,
-        branchId: formValue.branch.branchId,
-        branchName : formValue.branch.name,
-        yearId: formValue.year.yearId,
-        yearName: formValue.year.name,
-        semesterId: formValue.semester.semesterId,
-        semesterName: formValue.semester.name
-      };
-      this.store.dispatch(UserActions.signUpWithGoogle({user : newUser,isLoginForm}));
-    } else {
-      this.notificationService.showError('Please fill all required signup fields correctly.');
-      this.signupForm.markAllAsTouched();
-    }
-  }
-  
-  onLoginSubmit() {
-    if (this.loginForm.valid) {
-      const { email, password } = this.loginForm.value;
-      this.store.dispatch(UserActions.login({ email, password }));
-    } else {
-      this.notificationService.showError('Please enter valid login credentials.');
-      this.loginForm.markAllAsTouched(); 
-    }
-  }
-
-  handleOptionFiltering(){
+  handleOptionFiltering() {
     this.filteredColleges = this.signupForm.get('college')!.valueChanges.pipe(
       startWith(''),
       map((value) => this.filterColleges(value))
@@ -183,8 +194,7 @@ export class Home implements OnInit {
   }
 
   filterSemesters(value: Semester | string): Semester[] {
-    const filterValue =
-      typeof value === 'string' ? value.toLowerCase() : value?.name?.toLowerCase() || '';
+    const filterValue = typeof value === 'string' ? value.toLowerCase() : value?.name?.toLowerCase() || '';
     return this.semisters.filter((semister) => semister.name.toLowerCase().includes(filterValue));
   }
 
@@ -197,8 +207,7 @@ export class Home implements OnInit {
   }
 
   filterBranches(value: Branch | string): Branch[] {
-    const filterValue =
-      typeof value === 'string' ? value.toLowerCase() : value?.name?.toLowerCase() || '';
+    const filterValue = typeof value === 'string' ? value.toLowerCase() : value?.name?.toLowerCase() || '';
     return this.branches.filter((branch) => branch.name.toLowerCase().includes(filterValue));
   }
 
@@ -226,5 +235,13 @@ export class Home implements OnInit {
 
   displaySemisterFn(semester: Semester): string {
     return semester && semester.name ? semester.name : '';
+  }
+
+  closeProfilDrawer() {
+    this.closeDrawer.emit();
+  }
+
+  setEditMode() {
+    this.isEditMode.set(!this.isEditMode());
   }
 }

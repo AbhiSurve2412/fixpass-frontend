@@ -21,237 +21,239 @@
     <p>🎯 Whether it’s quick revision or deep understanding, FixPass has you covered.</p>
   </div>
 
-  <div class="form-container">
-    <div class="form-switch">
-      <button mat-button [class.active]="activeForm === 'signup'" (click)="activeForm = 'signup'">
-        Signup
-      </button>
-      <button mat-button [class.active]="activeForm === 'login'" (click)="activeForm = 'login'">
-        Login
-      </button>
-    </div>
-    @if (activeForm === 'login') {
-    <form [formGroup]="loginForm">
-      <div class="form-fields">
-        <mat-form-field class="full-width">
-          <mat-label>Email</mat-label>
-          <input matInput type="email" formControlName="email" required />
-          @if (loginForm.get('email')?.hasError('required') && loginForm.get('email')?.touched) {
-          <mat-error>Email is required</mat-error>
-          } @if (loginForm.get('email')?.hasError('email') && loginForm.get('email')?.touched) {
-          <mat-error>Please enter a valid email address</mat-error>
-          }
-        </mat-form-field>
-
-        <mat-form-field class="full-width" appearance="outline">
-          <mat-label>Password</mat-label>
-          <input
-            matInput
-            [type]="hidePassword ? 'password' : 'text'"
-            formControlName="password"
-            required
-          />
-
-          <button
-            mat-icon-button
-            matSuffix
-            (click)="hidePassword = !hidePassword"
-            type="button"
-            [attr.aria-label]="'Hide password'"
-            [attr.aria-pressed]="!hidePassword"
-          >
-            <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
-          </button>
-
-          @if (loginForm.get('password')?.hasError('required') &&
-          loginForm.get('password')?.touched) {
-          <mat-error>Password is required</mat-error>
-          }
-        </mat-form-field>
-      </div>
-      <div class="form-actions">
-        <button mat-raised-button class="secondary-btn" type="button">Cancel</button>
-        <button mat-stroked-button class="primary-btn" (click)="onLoginSubmit()" type="submit">
+  @if(!isUserLoggedIn()){
+    <div class="form-container">
+      <div class="form-switch">
+        <button mat-button [class.active]="activeForm === 'signup'" (click)="activeForm = 'signup'">
+          Signup
+        </button>
+        <button mat-button [class.active]="activeForm === 'login'" (click)="activeForm = 'login'">
           Login
         </button>
       </div>
-    </form>
-    } @else {
-    <form [formGroup]="signupForm">
-      <div class="form-fields">
-        <mat-form-field class="full-width">
-          <mat-label>Name</mat-label>
-          <input matInput formControlName="name" required />
-          @if (signupForm.get('name')?.hasError('required') && signupForm.get('name')?.touched) {
-          <mat-error>Name is required</mat-error>
-          }
-        </mat-form-field>
-
-        <mat-form-field class="full-width">
-          <mat-label>Email</mat-label>
-          <input matInput type="email" formControlName="email" required />
-          @if (signupForm.get('email')?.hasError('required') && signupForm.get('email')?.touched) {
-          <mat-error>Email is required</mat-error>
-          } @if (signupForm.get('email')?.hasError('email') && signupForm.get('email')?.touched) {
-          <mat-error>Please enter a valid email address</mat-error>
-          }
-        </mat-form-field>
-
-        <mat-form-field class="full-width" appearance="outline">
-          <mat-label>Password</mat-label>
-          <input
-            matInput
-            [type]="hidePassword ? 'password' : 'text'"
-            formControlName="password"
-            required
-          />
-
-          <button
-            mat-icon-button
-            matSuffix
-            (click)="hidePassword = !hidePassword"
-            type="button"
-            [attr.aria-label]="'Hide password'"
-            [attr.aria-pressed]="!hidePassword"
-          >
-            <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
-          </button>
-
-          @if (loginForm.get('password')?.hasError('required') &&
-          loginForm.get('password')?.touched) {
-          <mat-error>Password is required</mat-error>
-          }
-        </mat-form-field>
-
-        <mat-form-field class="full-width">
-          <mat-label>College Name</mat-label>
-          <input
-            matInput
-            type="text"
-            formControlName="college"
-            [matAutocomplete]="autoCollege"
-            required
-          />
-          <mat-autocomplete #autoCollege="matAutocomplete" [displayWith]="displayCollegeFn">
-            @if ((filteredColleges | async)?.length === 0) {
-            <mat-option disabled>No colleges found</mat-option>
-            } @for (college of filteredColleges | async; track college.collegeId) {
-            <mat-option [value]="college">
-              {{ college.name }}
-            </mat-option>
-            }
-          </mat-autocomplete>
-          @if (signupForm.get('college')?.hasError('required') &&
-          signupForm.get('college')?.touched) {
-          <mat-error>College name is required</mat-error>
-          }
-        </mat-form-field>
-
-        <mat-form-field class="full-width">
-          <mat-label>University</mat-label>
-          <input
-            matInput
-            type="text"
-            formControlName="university"
-            [matAutocomplete]="autoUniversity"
-            required
-          />
-          <mat-autocomplete #autoUniversity="matAutocomplete" [displayWith]="displayUniversityFn">
-            @if ((filteredUniversities | async)?.length === 0) {
-            <mat-option disabled>No universities found</mat-option>
-            } @for (university of filteredUniversities | async; track university.universityId) {
-            <mat-option [value]="university">
-              {{ university.name }}
-            </mat-option>
-            }
-          </mat-autocomplete>
-          @if (signupForm.get('university')?.hasError('required') &&
-          signupForm.get('university')?.touched) {
-          <mat-error>University is required</mat-error>
-          }
-        </mat-form-field>
-
-        <mat-form-field class="full-width">
-          <mat-label>Branch</mat-label>
-          <input
-            matInput
-            type="text"
-            formControlName="branch"
-            [matAutocomplete]="autoBranch"
-            required
-          />
-          <mat-autocomplete #autoBranch="matAutocomplete" [displayWith]="displayBranchFn">
-            @if ((filteredBranches | async)?.length === 0) {
-            <mat-option disabled>No branches found</mat-option>
-            } @for (branch of filteredBranches | async; track branch.branchId) {
-            <mat-option [value]="branch">
-              {{ branch.name }}
-            </mat-option>
-            }
-          </mat-autocomplete>
-          @if (signupForm.get('branch')?.hasError('required') &&
-          signupForm.get('branch')?.touched) {
-          <mat-error>Branch is required</mat-error>
-          }
-        </mat-form-field>
-
-
-        <div class="two-fields">
+      @if (activeForm === 'login') {
+      <form [formGroup]="loginForm">
+        <div class="form-fields">
           <mat-form-field class="full-width">
-            <mat-label>Semester</mat-label>
+            <mat-label>Email</mat-label>
+            <input matInput type="email" formControlName="email" required />
+            @if (loginForm.get('email')?.hasError('required') && loginForm.get('email')?.touched) {
+            <mat-error>Email is required</mat-error>
+            } @if (loginForm.get('email')?.hasError('email') && loginForm.get('email')?.touched) {
+            <mat-error>Please enter a valid email address</mat-error>
+            }
+          </mat-form-field>
+  
+          <mat-form-field class="full-width" appearance="outline">
+            <mat-label>Password</mat-label>
             <input
               matInput
-              type="text"
-              formControlName="semester"
-              [matAutocomplete]="autoSemester"
+              [type]="hidePassword ? 'password' : 'text'"
+              formControlName="password"
               required
             />
-            <mat-autocomplete #autoSemester="matAutocomplete" [displayWith]="displaySemisterFn">
-              @if ((filteredSemesters | async)?.length === 0) {
-                <mat-option disabled>No semesters found</mat-option>
-              }
-              @for (semester of filteredSemesters | async; track semester.semesterId) {
-                <mat-option [value]="semester">
-                  {{ semester.name }}
-                </mat-option>
-              }
-            </mat-autocomplete>
-          
-            @if (signupForm.get('semester')?.hasError('required') && signupForm.get('semester')?.touched) {
-              <mat-error>Semester is required</mat-error>
-            }
-          </mat-form-field>      
-          <mat-form-field class="full-width">
-            <mat-label>Year</mat-label>
-            <input
-              matInput
-              type="text"
-              formControlName="year"
-              [matAutocomplete]="autoYear"
-              required
-            />
-            <mat-autocomplete #autoYear="matAutocomplete" [displayWith]="displayYearFn">
-              @if ((filteredYears | async)?.length === 0) {
-              <mat-option disabled>No years found</mat-option>
-              } @for (year of filteredYears | async; track year.yearId) {
-              <mat-option [value]="year">
-                {{ year.name }}
-              </mat-option>
-              }
-            </mat-autocomplete>
-            @if (signupForm.get('year')?.hasError('required') && signupForm.get('year')?.touched) {
-            <mat-error>Year is required</mat-error>
+  
+            <button
+              mat-icon-button
+              matSuffix
+              (click)="hidePassword = !hidePassword"
+              type="button"
+              [attr.aria-label]="'Hide password'"
+              [attr.aria-pressed]="!hidePassword"
+            >
+              <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+  
+            @if (loginForm.get('password')?.hasError('required') &&
+            loginForm.get('password')?.touched) {
+            <mat-error>Password is required</mat-error>
             }
           </mat-form-field>
         </div>
-      </div>
-      <div class="form-actions">
-        <button mat-raised-button class="secondary-btn" type="button">Cancel</button>
-        <button mat-stroked-button class="primary-btn" type='submit' (click)="signUpWithEmailAndPassword()">
-          Submit
-        </button>
-      </div>
-    </form>
-    }
-  </div>
+        <div class="form-actions">
+          <button mat-raised-button class="secondary-btn" type="button">Cancel</button>
+          <button mat-stroked-button class="primary-btn" (click)="onLoginSubmit()" type="submit">
+            Login
+          </button>
+        </div>
+      </form>
+      } @else {
+      <form [formGroup]="signupForm">
+        <div class="form-fields">
+          <mat-form-field class="full-width">
+            <mat-label>Name</mat-label>
+            <input matInput formControlName="name" required />
+            @if (signupForm.get('name')?.hasError('required') && signupForm.get('name')?.touched) {
+            <mat-error>Name is required</mat-error>
+            }
+          </mat-form-field>
+  
+          <mat-form-field class="full-width">
+            <mat-label>Email</mat-label>
+            <input matInput type="email" formControlName="email" required />
+            @if (signupForm.get('email')?.hasError('required') && signupForm.get('email')?.touched) {
+            <mat-error>Email is required</mat-error>
+            } @if (signupForm.get('email')?.hasError('email') && signupForm.get('email')?.touched) {
+            <mat-error>Please enter a valid email address</mat-error>
+            }
+          </mat-form-field>
+  
+          <mat-form-field class="full-width" appearance="outline">
+            <mat-label>Password</mat-label>
+            <input
+              matInput
+              [type]="hidePassword ? 'password' : 'text'"
+              formControlName="password"
+              required
+            />
+  
+            <button
+              mat-icon-button
+              matSuffix
+              (click)="hidePassword = !hidePassword"
+              type="button"
+              [attr.aria-label]="'Hide password'"
+              [attr.aria-pressed]="!hidePassword"
+            >
+              <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+  
+            @if (loginForm.get('password')?.hasError('required') &&
+            loginForm.get('password')?.touched) {
+            <mat-error>Password is required</mat-error>
+            }
+          </mat-form-field>
+  
+          <mat-form-field class="full-width">
+            <mat-label>College Name</mat-label>
+            <input
+              matInput
+              type="text"
+              formControlName="college"
+              [matAutocomplete]="autoCollege"
+              required
+            />
+            <mat-autocomplete #autoCollege="matAutocomplete" [displayWith]="displayCollegeFn">
+              @if ((filteredColleges | async)?.length === 0) {
+              <mat-option disabled>No colleges found</mat-option>
+              } @for (college of filteredColleges | async; track college.collegeId) {
+              <mat-option [value]="college">
+                {{ college.name }}
+              </mat-option>
+              }
+            </mat-autocomplete>
+            @if (signupForm.get('college')?.hasError('required') &&
+            signupForm.get('college')?.touched) {
+            <mat-error>College name is required</mat-error>
+            }
+          </mat-form-field>
+  
+          <mat-form-field class="full-width">
+            <mat-label>University</mat-label>
+            <input
+              matInput
+              type="text"
+              formControlName="university"
+              [matAutocomplete]="autoUniversity"
+              required
+            />
+            <mat-autocomplete #autoUniversity="matAutocomplete" [displayWith]="displayUniversityFn">
+              @if ((filteredUniversities | async)?.length === 0) {
+              <mat-option disabled>No universities found</mat-option>
+              } @for (university of filteredUniversities | async; track university.universityId) {
+              <mat-option [value]="university">
+                {{ university.name }}
+              </mat-option>
+              }
+            </mat-autocomplete>
+            @if (signupForm.get('university')?.hasError('required') &&
+            signupForm.get('university')?.touched) {
+            <mat-error>University is required</mat-error>
+            }
+          </mat-form-field>
+  
+          <mat-form-field class="full-width">
+            <mat-label>Branch</mat-label>
+            <input
+              matInput
+              type="text"
+              formControlName="branch"
+              [matAutocomplete]="autoBranch"
+              required
+            />
+            <mat-autocomplete #autoBranch="matAutocomplete" [displayWith]="displayBranchFn">
+              @if ((filteredBranches | async)?.length === 0) {
+              <mat-option disabled>No branches found</mat-option>
+              } @for (branch of filteredBranches | async; track branch.branchId) {
+              <mat-option [value]="branch">
+                {{ branch.name }}
+              </mat-option>
+              }
+            </mat-autocomplete>
+            @if (signupForm.get('branch')?.hasError('required') &&
+            signupForm.get('branch')?.touched) {
+            <mat-error>Branch is required</mat-error>
+            }
+          </mat-form-field>
+  
+  
+          <div class="two-fields">
+            <mat-form-field class="full-width">
+              <mat-label>Semester</mat-label>
+              <input
+                matInput
+                type="text"
+                formControlName="semester"
+                [matAutocomplete]="autoSemester"
+                required
+              />
+              <mat-autocomplete #autoSemester="matAutocomplete" [displayWith]="displaySemisterFn">
+                @if ((filteredSemesters | async)?.length === 0) {
+                  <mat-option disabled>No semesters found</mat-option>
+                }
+                @for (semester of filteredSemesters | async; track semester.semesterId) {
+                  <mat-option [value]="semester">
+                    {{ semester.name }}
+                  </mat-option>
+                }
+              </mat-autocomplete>
+            
+              @if (signupForm.get('semester')?.hasError('required') && signupForm.get('semester')?.touched) {
+                <mat-error>Semester is required</mat-error>
+              }
+            </mat-form-field>      
+            <mat-form-field class="full-width">
+              <mat-label>Year</mat-label>
+              <input
+                matInput
+                type="text"
+                formControlName="year"
+                [matAutocomplete]="autoYear"
+                required
+              />
+              <mat-autocomplete #autoYear="matAutocomplete" [displayWith]="displayYearFn">
+                @if ((filteredYears | async)?.length === 0) {
+                <mat-option disabled>No years found</mat-option>
+                } @for (year of filteredYears | async; track year.yearId) {
+                <mat-option [value]="year">
+                  {{ year.name }}
+                </mat-option>
+                }
+              </mat-autocomplete>
+              @if (signupForm.get('year')?.hasError('required') && signupForm.get('year')?.touched) {
+              <mat-error>Year is required</mat-error>
+              }
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button mat-raised-button class="secondary-btn" type="button">Cancel</button>
+          <button mat-stroked-button class="primary-btn" type='submit' (click)="signUpWithEmailAndPassword()">
+            Submit
+          </button>
+        </div>
+      </form>
+      }
+    </div>
+  }
 </div>

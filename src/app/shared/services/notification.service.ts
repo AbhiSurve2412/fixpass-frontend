@@ -28,7 +28,7 @@ export class NotificationService {
   }
 
   showWarning(message: string) {
-    this.snackBar.open(message, 'Close', {
+    this.snackBar.open(message,'✖', {
       ...this.defaultConfig,
       panelClass: ['snackbar-warning']
     });

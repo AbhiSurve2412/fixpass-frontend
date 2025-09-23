@@ -45,6 +45,7 @@ export class UserEffects {
           map((user) => {
             this.notification.showSuccess('Login successful!');
             this.router.navigate(['/study-material']);
+            localStorage.setItem('userId', user.userId!);
             return UserActions.loginSuccess({ user });
           }),
           catchError((error: FirebaseError) => {
@@ -66,6 +67,7 @@ export class UserEffects {
           map(() => {
             this.notification.showInfo('Logged out successfully.');
             this.router.navigate(['/home']);
+            localStorage.clear();
             return UserActions.logoutSuccess();
           }),
           catchError((error: FirebaseError) => {
@@ -85,8 +87,7 @@ export class UserEffects {
         this.userService.getUserById(userId).pipe(
           map((user) => {
             if (!user)
-              throw { code: 'auth/user-not-found', message: 'User not found' } as FirebaseError;
-            this.notification.showInfo('User profile loaded');
+            throw { code: 'auth/user-not-found', message: 'User not found' } as FirebaseError;
             return UserActions.getUserByIdSuccess({ user });
           }),
           catchError((error: FirebaseError) => {

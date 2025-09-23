@@ -83,12 +83,14 @@ export const userReducer = createReducer(
   on(UserActions.getUserById, (state) => ({
     ...state,
     loading: true,
+    isAuthenticated: false,
     error: undefined,
   })),
 
   on(UserActions.getUserByIdSuccess, (state, { user }) => ({
     ...state,
     loggedInUser: user,
+    isAuthenticated: true,
     loading: false,
     error: undefined,
   })),
@@ -96,6 +98,7 @@ export const userReducer = createReducer(
   on(UserActions.getUserByIdFailure, (state, { error }) => ({
     ...state,
     loading: false,
+    isAuthenticated: false,
     error,
   })),
 

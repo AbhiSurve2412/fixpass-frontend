@@ -53,6 +53,15 @@ body {
     backdrop-filter: blur(2.5rem);
   }
 
+  .mat-mdc-menu-panel{
+    background: transparent;
+    backdrop-filter: blur(2.5rem);
+    border-radius: 0.5rem;
+  }
+  .mat-mdc-menu-item:not([disabled]):hover{
+    background: $fixpass-gray-300;
+  }
+
   .primary-btn {
     background-color: var(--fixpass-primary);
     color: var(--fixpass-white);
