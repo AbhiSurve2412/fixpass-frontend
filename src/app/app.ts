@@ -31,25 +31,21 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
-export class App implements OnInit {
+export class App implements OnInit{
   private store = inject(Store);
   protected readonly title = signal('fix-pass');
   @ViewChild('profileDrawer') profileDrawer!: MatDrawer;
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
   isLoading$: Observable<boolean | undefined> = this.store.select(getIsLoading);
-  isLoading = false;
+
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
       const userId = localStorage.getItem('userId');
       if (userId) {
         this.store.dispatch(UserActions.getUserById({ userId }));
       }
-    }
-
-    setTimeout(() => {
-      this.isLoading = true;
-    },500);    
+    }  
   }
 
   openProfile(): void {

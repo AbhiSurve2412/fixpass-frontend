@@ -38,4 +38,8 @@ export class Navbar {
   logOutUser(){
     this.store.dispatch(UserActions.logout());
   }
+
+  navigateToStudyMaterial(){
+    this.router.navigate(['/study-material']);
+  }
 }
