@@ -108,10 +108,15 @@ body {
     justify-content: center;
     align-items: center;
     z-index: 1000;
+    height: 100vh;
   }
 
   .mat-mdc-snack-bar-container .mat-mdc-button.mat-mdc-snack-bar-action:not(:disabled) {
     --mat-button-text-state-layer-color: transparent;
     --mat-button-text-ripple-color: transparent;
+  }
+
+  mat-progress-spinner {
+    stroke: var(--fixpass-secondary) !important; 
   }
 }

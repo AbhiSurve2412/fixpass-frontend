@@ -10,6 +10,12 @@
   color: var(--fixpass-white);
   padding : 0.5rem 1rem;
 
+  .nav-bar-options{
+    display: flex;
+    gap : 0.5rem;
+    align-items: center;
+  }
+
   .navbar-logo {
     font-size: 1.5rem;
     font-weight: 700;

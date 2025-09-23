@@ -3,20 +3,22 @@
     FixPass
   </div>
 
-  <div class="navbar-profile">
+  <div class="nav-bar-options">
+    <a>
+     Study Material
+    </a>
     <button mat-icon-button [matMenuTriggerFor]="profileMenu">
       <mat-icon>account_circle</mat-icon>
     </button>
-
-    <mat-menu #profileMenu="matMenu">
-      <button mat-menu-item type="button" (click)="openProfileDrawer()">
-        <mat-icon>person</mat-icon>
-        <span>View Profile</span>
-      </button>
-      <button mat-menu-item  type="button" (click)="logOutUser()">
-        <mat-icon>logout</mat-icon>
-        <span>Logout</span>
-      </button>
-    </mat-menu>
   </div>
 </nav>
+<mat-menu #profileMenu="matMenu">
+  <button mat-menu-item type="button" (click)="openProfileDrawer()">
+    <mat-icon>person</mat-icon>
+    <span>View Profile</span>
+  </button>
+  <button mat-menu-item  type="button" (click)="logOutUser()">
+    <mat-icon>logout</mat-icon>
+    <span>Logout</span>
+  </button>
+</mat-menu>
