@@ -1,0 +1,41 @@
+<div class="study-material-container" [class.collapsed]="isCollapsed()">
+  <div class="sidenav">
+    <div class="collapse-button-container">
+      <button mat-icon-button (click)="toggleSidenav()">
+        <mat-icon>{{ isCollapsed() ? 'arrow_right' : 'arrow_left' }}</mat-icon>
+      </button>
+    </div>
+    <ul class="subject-list">   
+      @for (subject of userSubjects; track subject; let i = $index) {
+      <li class="subject" [class.active]="selectedSubject() === subject" (click)="selectSubject(subject)">
+        {{ subject.name }}
+      </li>
+      }
+    </ul>
+  </div>
+
+  <div class="sidenav-content" [class.collapsed]="isCollapsed()">
+    <div class="units-list">
+      <mat-tab-group
+        mat-stretch-tabs="false"
+        [selectedIndex]="selectedIndex"
+        (selectedTabChange)="onTabChange($event)"
+      >
+        @for (unit of units; track unit; let i = $index) {
+          <mat-tab  [label]="unit.name">
+            <ng-template matTabContent>
+              <div class="tab-content">
+                @for(question of questions; track question; let i = $index){
+                  <div class="tab-main-content">
+                    <h4 class="question">{{i+1}}) {{ question.name }}</h4>
+                    <app-answer [questionId]="question.questionId"></app-answer>
+                  </div>
+                }
+              </div>
+            </ng-template>
+          </mat-tab>
+        }
+      </mat-tab-group>
+    </div>
+  </div>
+</div>

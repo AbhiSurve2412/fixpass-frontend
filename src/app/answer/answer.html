@@ -1,0 +1,77 @@
+<div class="answer">
+    @for (row of answer?.content; track row) {
+      
+      <!-- Header -->
+      @if (row.type === 'header') {
+        <h4>{{ row.data }}</h4>
+      }
+  
+      <!-- Text / Content -->
+      @if (row.type === 'text' || row.type === 'content') {
+        <p>{{ row.data }}</p>
+      }
+  
+      <!-- Diagram -->
+      @if (row.type === 'diagram') {
+        <div class="diagram">
+          <img [src]="row.data.url" [alt]="row.data.description" />
+          <p>{{ row.data.description }}</p>
+        </div>
+      }
+  
+      <!-- Table -->
+      @if (row.type === 'table') {
+        <table class="content-table" border="1">
+          <thead>
+            <tr>
+              @for (header of row.data.headers; track header) {
+                <th>{{ header }}</th>
+              }
+            </tr>
+          </thead>
+          <tbody>
+            @for (r of row.data.rows; track r) {
+              <tr>
+                @for (cell of r; track cell) {
+                  <td>{{ cell }}</td>
+                }
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+  
+      <!-- Ordered / Unordered List -->
+      @if (row.type === 'Olist' || row.type === 'Ulist') {
+        <ng-container *ngTemplateOutlet="renderList; context:{ list: row.data, isOrdered: row.type === 'Olist' }"></ng-container>
+      }
+    }
+  </div>
+  
+  <!-- Recursive List Template -->
+  <ng-template #renderList let-list="list" let-isOrdered="isOrdered">
+    @if (isOrdered) {
+      <ol>
+        @for (item of list; track item) {
+          <li>
+            {{ item.text }}
+            @if (item.subpoints?.length) {
+              <ng-container *ngTemplateOutlet="renderList; context:{ list: item.subpoints, isOrdered: false }"></ng-container>
+            }
+          </li>
+        }
+      </ol>
+    } @else {
+      <ul>
+        @for (item of list; track item) {
+          <li>
+            {{ item.text }}
+            @if (item.subpoints?.length) {
+              <ng-container *ngTemplateOutlet="renderList; context:{ list: item.subpoints, isOrdered: false }"></ng-container>
+            }
+          </li>
+        }
+      </ul>
+    }
+  </ng-template>
+  
