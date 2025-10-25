@@ -12,10 +12,36 @@
   color: var(--fixpass-white);
   padding : 0.5rem 1rem;
 
-  .nav-bar-options{
+  .nav-bar-options {
     display: flex;
-    gap : 0.5rem;
+    gap: 0.5rem;
     align-items: center;
+
+    button {
+      font-size: 1rem;
+      border-radius: 0.5rem;
+      transition: all 0.3s;
+
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+      }
+
+      &.active {
+        background-color: var(--fixpass-white);
+        color: var(--fixpass-primary);
+        font-weight: 600;
+        box-shadow: 0 0.125rem 0.3125rem rgba(0, 0, 0, 0.2);
+      }
+    }
+
+    button.mat-icon-button {
+      color: var(--fixpass-white);
+
+      &:hover {
+        color: var(--fixpass-accent);
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+    }
   }
 
   .navbar-logo {

@@ -1,9 +1,10 @@
 import { Routes } from '@angular/router';
 import { Home } from './home/home';
 import { StudyMaterial } from './study-material/study-material';
+import { AuthGuard } from './shared/gaurds/auth-guard';
 
 export const routes: Routes = [
   { path: '', component: Home }, 
   { path: 'home', component: Home } ,
-  { path: 'study-material', component: StudyMaterial } ,
+  { path: 'study-material', component: StudyMaterial,  canActivate: [AuthGuard]   } ,
 ];

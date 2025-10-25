@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, computed, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -69,6 +69,10 @@ export class Home implements OnInit {
 
   isLoading$ : Observable<boolean | undefined> = this.store.select(getIsLoading);
   isUserLoggedIn = toSignal(this.store.select(getIsAuthenticated));
+  isLoading = computed(() => {
+    const userId = localStorage.getItem('userId');
+    return !userId && !this.isUserLoggedIn; 
+  });
   
   ngOnInit() {
     this.signupForm = this.formBuilder.group({
@@ -76,10 +80,10 @@ export class Home implements OnInit {
       password: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       college: ['', Validators.required],
-      university: ['', Validators.required],
-      branch: ['', Validators.required],
-      year: ['', [Validators.required]],
-      semester: ['', [Validators.required]],
+      university: [{ value: engineeringUniversities[0], disabled: true }, Validators.required],
+      branch: [{ value: engineeringBranches[0], disabled: true }, Validators.required],
+      year: [{ value: engineeringYears[2], disabled: true }, [Validators.required]],
+      semester: [{ value: engineeringSemisters[1], disabled: true }, [Validators.required]],
     });
 
     this.loginForm = this.formBuilder.group({
@@ -92,7 +96,7 @@ export class Home implements OnInit {
 
   signUpWithEmailAndPassword(){
     if (this.signupForm.valid) {
-      const formValue = this.signupForm.value;
+      const formValue = this.signupForm.getRawValue();
       const password = formValue.password;
       const newUser: User = {
         name: formValue.name,
@@ -117,7 +121,7 @@ export class Home implements OnInit {
 
   signUpWithGoogle(isLoginForm : boolean) {
     if (this.signupForm.valid || isLoginForm) {
-      const formValue = this.signupForm.value;
+      const formValue = this.signupForm.getRawValue();
       const newUser: User = {
         name: formValue.name,
         email: formValue.email,

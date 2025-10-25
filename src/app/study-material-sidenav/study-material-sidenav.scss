@@ -50,6 +50,8 @@
             .tab-content {
                 background: $fixpass-white;
                 padding: 0.5rem;
+                max-height: calc(100vh - 3rem);
+                overflow: auto;
             }
         }
     }

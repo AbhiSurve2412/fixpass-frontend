@@ -83,7 +83,7 @@ export const engineeringQuestionsAnswers: Answer[] = [
           {
             "type": "diagram",
             "data": {
-              "url": "diagram-2nf-overview.url",
+              "url": "assets/diagram-2nf-overview.png",
               "description": "2NF Example Table"
             }
           },

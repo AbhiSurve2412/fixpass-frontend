@@ -1,0 +1,104 @@
+  .answer {
+      background-color: var(--fixpass-white);
+      color: var(--fixpass-text-primary);
+      line-height: 1.7;
+      font-size: 0.96875rem;
+      padding: 0.5rem;
+      border-radius: 0.75rem;
+      box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.45);
+      max-height: calc(100vh - 10rem);
+      overflow: auto;
+      margin-top: 0.625rem;
+
+      h4 {
+          font-size: 1.125rem;
+          font-weight: 600;
+          color: var(--fixpass-neutral-800);
+      }
+
+      p {
+          margin-bottom: 0.9rem;
+          color: var(--fixpass-neutral-700);
+      }
+
+      .diagram {
+          text-align: center;
+          margin: 1rem 0;
+
+          img {
+              width: 100%;
+              height: auto;
+              max-width: 100%;
+              border-radius: 0.5rem;
+              border: 0.0625rem solid var(--fixpass-gray-300);
+              box-shadow: 0 0.0625rem 0.25rem rgba(0, 0, 0, 0.08);
+              object-fit: cover;
+              display: block;
+          }
+
+          p {
+              font-size: 0.84375rem;
+              color: var(--fixpass-text-muted);
+              margin-top: 0.3rem;
+          }
+      }
+
+      ul,
+      ol {
+          margin: 0.5rem 0 1rem 1.5rem;
+          padding-left: 1rem;
+
+          li {
+              margin-bottom: 0.4rem;
+          }
+      }
+
+      ul ul,
+      ul ol,
+      ol ul,
+      ol ol {
+          margin-top: 0.3rem;
+          margin-bottom: 0.3rem;
+      }
+
+      table.content-table {
+          width: 100%;
+          border-collapse: collapse;
+          margin: 1rem 0;
+          font-size: 0.90625rem;
+
+          th,
+          td {
+              border: 0.0625rem solid var(--fixpass-gray-300);
+              padding: 0.6rem 0.8rem;
+              text-align: left;
+          }
+
+          th {
+              background-color: var(--fixpass-gray-100);
+              font-weight: 600;
+          }
+
+          tr:nth-child(even) {
+              background-color: var(--fixpass-neutral-50);
+          }
+
+          tr:hover {
+              background-color: var(--fixpass-neutral-100);
+              transition: background 0.2s;
+          }
+      }
+
+      pre {
+          background-color: var(--fixpass-gray-100);
+          padding: 1rem;
+          border-radius: 0.5rem;
+          overflow-x: auto;
+          font-family: "JetBrains Mono", monospace;
+          font-size: 0.8125rem;
+      }
+
+      * {
+          transition: all 0.2s ease;
+      }
+  }

@@ -91,10 +91,10 @@ export class Profile implements OnInit {
       name: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       college: ['', Validators.required],
-      university: ['', Validators.required],
-      branch: ['', Validators.required],
-      year: ['', [Validators.required]],
-      semester: ['', [Validators.required]],
+      university: [{ value: engineeringUniversities[0], disabled: true }, Validators.required],
+      branch: [{ value: engineeringBranches[0], disabled: true }, Validators.required],
+      year: [{ value: engineeringYears[2], disabled: true }, [Validators.required]],
+      semester: [{ value: engineeringSemisters[1], disabled: true }, [Validators.required]],
     });
     this.handleOptionFiltering();
   }
@@ -136,7 +136,7 @@ export class Profile implements OnInit {
 
   updateProfile() {
     if (this.signupForm.valid) {
-      const formValue = this.signupForm.value;
+      const formValue = this.signupForm.getRawValue();
       const newUser: User = {
         userId : this.userDetails()?.userId,
         name: formValue.name,

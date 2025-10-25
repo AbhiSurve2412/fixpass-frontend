@@ -23,9 +23,10 @@ export class UserEffects {
         this.userService.signupWithEmailAndPassword(user, password).pipe(
           map((newUser) => {
             this.notification.showSuccess('Signup successful!');
+            localStorage.setItem('userId', newUser.userId!);
             this.router.navigate(['/study-material']);
             return UserActions.signUpSuccess({ user: newUser });
-          }),
+          }), 
           catchError((error: FirebaseError) => {
             console.log(error);
             const msg = mapFirebaseError(error);
