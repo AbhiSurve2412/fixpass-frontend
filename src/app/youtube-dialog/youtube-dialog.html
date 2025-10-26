@@ -1,0 +1,16 @@
+<mat-dialog-content class="dialog-content">
+    <div class="dialog-header">
+        <button mat-icon-button
+          class="close-btn"
+          (click)="closeDialog()"
+          aria-label="Close video">
+    <mat-icon>close</mat-icon>
+  </button>
+    </div>
+    <div class="video-container">
+        <iframe [src]="videoUrl" frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen>
+    </iframe>
+    </div>
+</mat-dialog-content>

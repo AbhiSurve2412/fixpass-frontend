@@ -12,10 +12,14 @@ import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { environment } from '../environment';
 import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
 import { provideFirestore, getFirestore } from '@angular/fire/firestore';
+import { provideAuth, getAuth } from '@angular/fire/auth';
+import { provideEffects } from '@ngrx/effects';
+
 import { userReducer } from './state/user-state/user.reducers';
 import { UserEffects } from './state/user-state/user.effects';
-import { provideEffects } from '@ngrx/effects';
-import { provideAuth, getAuth } from '@angular/fire/auth';
+
+import { studyMaterialReducer } from './state/study-material/study-material.reducers';
+import { StudyMaterialEffects } from './state/study-material/study-material.effects';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -27,7 +31,10 @@ export const appConfig: ApplicationConfig = {
     provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideFirestore(() => getFirestore()),
     provideAuth(() => getAuth()),
-    provideStore({ user: userReducer }),
-    provideEffects([UserEffects]),
+    provideStore({ 
+      user: userReducer,
+      studyMaterial: studyMaterialReducer  
+    }),
+    provideEffects([UserEffects, StudyMaterialEffects]), 
   ],
 };

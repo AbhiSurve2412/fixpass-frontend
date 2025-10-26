@@ -37,10 +37,10 @@
           <mat-label>College Name</mat-label>
           @if (isEditMode()) {
           <input matInput type="text" formControlName="college" [matAutocomplete]="autoCollege" required />
-          <mat-autocomplete #autoCollege="matAutocomplete" [displayWith]="displayCollegeFn">
-            @if ((filteredColleges | async)?.length === 0) {
+          <mat-autocomplete #autoCollege="matAutocomplete" [displayWith]="displayFn">
+            @if ((filteredColleges$ | async)?.length === 0) {
             <mat-option disabled>No colleges found</mat-option>
-            } @for (college of filteredColleges | async; track college.collegeId) {
+            } @for (college of filteredColleges$ | async; track college.collegeId) {
             <mat-option [value]="college">
               {{ college.name }}
             </mat-option>
@@ -48,7 +48,7 @@
           </mat-autocomplete>
           } @else {
           <input matInput type="text"  readonly
-          [value]="displayCollegeFn(signupForm.get('college')?.value)"/>
+          [value]="displayFn(signupForm.get('college')?.value)"/>
           }
           @if (signupForm.get('college')?.hasError('required') && signupForm.get('college')?.touched) {
           <mat-error>College name is required</mat-error>
@@ -58,7 +58,7 @@
         <mat-form-field class="full-width"  [ngClass]="{'disabled-field': !isEditMode()}">
           <mat-label>University</mat-label>
           <input matInput type="text"  readonly
-          [value]="displayUniversityFn(signupForm.get('university')?.value)"/>
+          [value]="displayFn(signupForm.get('university')?.value)"/>
           <!-- @if (isEditMode()) {
           <input matInput type="text" formControlName="university" [matAutocomplete]="autoUniversity" required />
           <mat-autocomplete #autoUniversity="matAutocomplete" [displayWith]="displayUniversityFn">
@@ -81,7 +81,7 @@
 
         <mat-form-field class="full-width"  [ngClass]="{'disabled-field': !isEditMode()}">
           <mat-label>Branch</mat-label>
-          <input matInput type="text" readonly [value]="displayBranchFn(signupForm.get('branch')?.value)"/>
+          <input matInput type="text" readonly [value]="displayFn(signupForm.get('branch')?.value)"/>
           <!-- @if (isEditMode()) {
           <input matInput type="text" formControlName="branch" [matAutocomplete]="autoBranch" required />
           <mat-autocomplete #autoBranch="matAutocomplete" [displayWith]="displayBranchFn">
@@ -105,7 +105,7 @@
           <mat-form-field class="full-width"  [ngClass]="{'disabled-field': !isEditMode()}">
             <mat-label>Semester</mat-label>
             <input matInput type="text" readonly
-            [value]="displaySemisterFn(signupForm.get('semester')?.value)"/>
+            [value]="displayFn(signupForm.get('semester')?.value)"/>
             <!-- @if (isEditMode()) {
             <input matInput type="text" formControlName="semester" [matAutocomplete]="autoSemester" required />
             <mat-autocomplete #autoSemester="matAutocomplete" [displayWith]="displaySemisterFn">
@@ -128,7 +128,7 @@
           </mat-form-field>
           <mat-form-field class="full-width"  [ngClass]="{'disabled-field': !isEditMode()}">
             <mat-label>Year</mat-label>
-            <input matInput type="text" readonly [value]="displayYearFn(signupForm.get('year')?.value)" />
+            <input matInput type="text" readonly [value]="displayFn(signupForm.get('year')?.value)" />
             <!-- @if (isEditMode()) {
             <input matInput type="text" formControlName="year" [matAutocomplete]="autoYear" required />
             <mat-autocomplete #autoYear="matAutocomplete" [displayWith]="displayYearFn">

@@ -7,18 +7,21 @@ import { isPlatformBrowser } from '@angular/common';
 })
 export class AuthGuard implements CanActivate {
 
-  constructor(private router: Router, @Inject(PLATFORM_ID) private platformId: any) {}
+  constructor(
+    private router: Router,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {}
 
   canActivate(): boolean {
     if (isPlatformBrowser(this.platformId)) {
-      const isLoggedIn = !!localStorage.getItem('userId'); 
+      const isLoggedIn = !!localStorage.getItem('userId');
       if (!isLoggedIn) {
         this.router.navigate(['/']); 
         return false;
       }
       return true;
-    } else {
-      return false;
     }
+
+    return true;
   }
 }

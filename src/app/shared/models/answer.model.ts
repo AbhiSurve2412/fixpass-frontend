@@ -3,5 +3,6 @@ export interface Answer {
     name : string,
     description? : string,
     answer : any,
+    simpleAnswer? : any,
     questionId : string
 }

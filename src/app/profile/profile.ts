@@ -15,29 +15,32 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatSelectModule } from '@angular/material/select';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { Observable, startWith, map } from 'rxjs';
-import { engineeringYears } from '../shared/constants/years';
-import { engineeringUniversities } from '../shared/constants/universities';
-import { engineeringBranches } from '../shared/constants/branches';
-import { engineeringColleges } from '../shared/constants/colleges';
+import { Observable, startWith, map, combineLatest } from 'rxjs';
 import { CommonModule } from '@angular/common';
-import { University } from '../shared/models/university.model';
-import { Year } from '../shared/models/year.model';
-import { Branch } from '../shared/models/branch.model';
-import { College } from '../shared/models/college.model';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { NotificationService } from '../shared/services/notification.service';
 import { User } from '../state/user-state/user.model';
 import { UserActions } from '../state/user-state/user.actions';
 import { Store } from '@ngrx/store';
-import { MatIconModule } from '@angular/material/icon';
 import { getIsLoading, getLoggedInUser } from '../state/user-state/user.selectors';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { engineeringSemisters } from '../shared/constants/semesters';
-import { Semester } from '../shared/models/semester.model';
 import { toSignal } from '@angular/core/rxjs-interop';
+import {
+  getEngineeringYears,
+  isYearsLoading,
+  getEngineeringBranches,
+  isBranchesLoading,
+  getEngineeringColleges,
+  isCollegesLoading,
+  getEngineeringUniversities,
+  isUniversitiesLoading,
+  getEngineeringSemesters,
+  isSemestersLoading,
+} from '../state/study-material/study-material.selectors';
 
 @Component({
   selector: 'app-profile',
+  standalone: true,
   imports: [
     ReactiveFormsModule,
     MatFormFieldModule,
@@ -48,7 +51,6 @@ import { toSignal } from '@angular/core/rxjs-interop';
     MatAutocompleteModule,
     CommonModule,
     MatIconModule,
-    MatProgressSpinnerModule,
     MatProgressSpinnerModule
   ],
   templateUrl: './profile.html',
@@ -58,190 +60,159 @@ export class Profile implements OnInit {
   @Output() closeDrawer = new EventEmitter<void>();
 
   signupForm!: FormGroup;
-  private formBuilder: FormBuilder = inject(FormBuilder);
-  private notificationService = inject(NotificationService);
+  private fb = inject(FormBuilder);
+  private notify = inject(NotificationService);
   private store = inject(Store);
 
-  universities = engineeringUniversities;
-  branches = engineeringBranches;
-  years = engineeringYears;
-  colleges = engineeringColleges;
-  semisters = engineeringSemisters;
+  years = toSignal(this.store.select(getEngineeringYears), { initialValue: [] });
+  branches  = toSignal(this.store.select(getEngineeringBranches), { initialValue: [] });
+  colleges = toSignal(this.store.select(getEngineeringColleges), { initialValue: [] });
+  universities = toSignal(this.store.select(getEngineeringUniversities), { initialValue: [] });
+  semesters = toSignal(this.store.select(getEngineeringSemesters), { initialValue: [] });
 
-  filteredUniversities!: Observable<University[]>;
-  filteredBranches!: Observable<Branch[]>;
-  filteredYears!: Observable<Year[]>;
-  filteredColleges!: Observable<College[]>;
-  filteredSemesters!: Observable<Semester[]>;
+  yearsLoading = toSignal(this.store.select(isYearsLoading), { initialValue: false });
+  branchesLoading = toSignal(this.store.select(isBranchesLoading), { initialValue: false });
+  collegesLoading = toSignal(this.store.select(isCollegesLoading), { initialValue: false });
+  universitiesLoading = toSignal(this.store.select(isUniversitiesLoading), { initialValue: false });
+  semestersLoading = toSignal(this.store.select(isSemestersLoading), { initialValue: false });
 
-  isLoading$: Observable<boolean | undefined> = this.store.select(getIsLoading);
-
+  isLoading$ = this.store.select(getIsLoading);
   userDetails: Signal<User | undefined> = toSignal(this.store.select(getLoggedInUser));
   isEditMode = signal(false);
+
+  filteredColleges$!: Observable<any[]>;
+  filteredUniversities$!: Observable<any[]>;
+  filteredBranches$!: Observable<any[]>;
+  filteredYears$!: Observable<any[]>;
+  filteredSemesters$!: Observable<any[]>;
 
   constructor() {
     effect(() => {
       this.patchForm();
-      this.disabeFormFields();
+      this.disableFormFields();
     });
   }
 
-  ngOnInit() {
-    this.signupForm = this.formBuilder.group({
+  ngOnInit(): void {
+    this.buildForm();
+    this.setupAutocompleteFilters();
+  }
+
+  private buildForm(): void {
+    this.signupForm = this.fb.group({
       name: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       college: ['', Validators.required],
-      university: [{ value: engineeringUniversities[0], disabled: true }, Validators.required],
-      branch: [{ value: engineeringBranches[0], disabled: true }, Validators.required],
-      year: [{ value: engineeringYears[2], disabled: true }, [Validators.required]],
-      semester: [{ value: engineeringSemisters[1], disabled: true }, [Validators.required]],
+      university: [{ value: null, disabled: true }, Validators.required],
+      branch: [{ value: null, disabled: true }, Validators.required],
+      year: [{ value: null, disabled: true }, Validators.required],
+      semester: [{ value: null, disabled: true }, Validators.required],
     });
-    this.handleOptionFiltering();
   }
 
-  disabeFormFields() {
+  private disableFormFields(): void {
+    const controls = ['email', 'name', 'college', 'university', 'branch', 'year', 'semester'];
     if (this.isEditMode()) {
-      this.signupForm.get('email')?.enable();
-      this.signupForm.get('name')?.enable();
-      this.signupForm.get('college')?.enable();
-      this.signupForm.get('university')?.enable();
-      this.signupForm.get('branch')?.enable();
-      this.signupForm.get('year')?.enable();
-      this.signupForm.get('semester')?.enable();
+      controls.forEach(c => this.signupForm.get(c)?.enable());
     } else {
-      this.signupForm.get('email')?.disable();
-      this.signupForm.get('name')?.disable();
-      this.signupForm.get('college')?.disable();
-      this.signupForm.get('university')?.disable();
-      this.signupForm.get('branch')?.disable();
-      this.signupForm.get('year')?.disable();
-      this.signupForm.get('semester')?.disable();
+      controls.forEach(c => this.signupForm.get(c)?.disable());
     }
-  }  
+  }
 
-  patchForm() {
+  private patchForm(): void {
     const user = this.userDetails();
-    if (user) {
-      this.signupForm.patchValue({
-        name: user.name,
-        email: user.email,
-        college: this.colleges.find((c) => c.collegeId === user.collegeId) || null,
-        university: this.universities.find((u) => u.universityId === user.universityId) || null,
-        branch: this.branches.find((b) => b.branchId === user.branchId) || null,
-        year: this.years.find((y) => y.yearId === user.yearId) || null,
-        semester: this.semisters.find((s) => s.semesterId === user.semesterId) || null,
-      });
-    }
+    if (!user) return;
+
+    const college = this.colleges().find(c => c.collegeId === user.collegeId) || null;
+    const university = this.universities().find(u => u.universityId === user.universityId) || null;
+    const branch = this.branches().find(b => b.branchId === user.branchId) || null;
+    const year = this.years().find(y => y.yearId === user.yearId) || null;
+    const semester = this.semesters().find(s => s.semesterId === user.semesterId) || null;
+    console.log(branch);
+    this.signupForm.patchValue({
+      name: user.name,
+      email: user.email,
+      college,
+      university,
+      branch,
+      year,
+      semester
+    });
   }
 
-  updateProfile() {
-    if (this.signupForm.valid) {
-      const formValue = this.signupForm.getRawValue();
-      const newUser: User = {
-        userId : this.userDetails()?.userId,
-        name: formValue.name,
-        email: formValue.email,
-        collegeId: formValue.college.collegeId,
-        collegeName: formValue.college.name,
-        universityId: formValue.university.universityId,
-        universityName: formValue.university.name,
-        branchId: formValue.branch.branchId,
-        branchName: formValue.branch.name,
-        yearId: formValue.year.yearId,
-        yearName: formValue.year.name,
-        semesterId: formValue.semester.semesterId,
-        semesterName: formValue.semester.name
-      };
-      this.store.dispatch(UserActions.updateUserProfile({user : newUser}));
-      this.isEditMode.set(false);
-    } else {
-      this.notificationService.showError('Please fill all required fields correctly.');
+  private setupAutocompleteFilters(): void {
+    const colleges$ = this.store.select(getEngineeringColleges);
+    const universities$ = this.store.select(getEngineeringUniversities);
+    const branches$ = this.store.select(getEngineeringBranches);
+    const years$ = this.store.select(getEngineeringYears);
+    const semesters$ = this.store.select(getEngineeringSemesters);
+
+    this.filteredColleges$ = combineLatest([
+      this.signupForm.get('college')!.valueChanges.pipe(startWith('')),
+      colleges$
+    ]).pipe(map(([input, list]) => this.filter(list, input)));
+
+    this.filteredUniversities$ = combineLatest([
+      this.signupForm.get('university')!.valueChanges.pipe(startWith('')),
+      universities$
+    ]).pipe(map(([input, list]) => this.filter(list, input)));
+
+    this.filteredBranches$ = combineLatest([
+      this.signupForm.get('branch')!.valueChanges.pipe(startWith('')),
+      branches$
+    ]).pipe(map(([input, list]) => this.filter(list, input)));
+
+    this.filteredYears$ = combineLatest([
+      this.signupForm.get('year')!.valueChanges.pipe(startWith('')),
+      years$
+    ]).pipe(map(([input, list]) => this.filter(list, input)));
+
+    this.filteredSemesters$ = combineLatest([
+      this.signupForm.get('semester')!.valueChanges.pipe(startWith('')),
+      semesters$
+    ]).pipe(map(([input, list]) => this.filter(list, input)));
+  }
+
+  filter<T extends { name: string }>(source: T[], value: string | T): T[] {
+    const term = typeof value === 'string' ? value.toLowerCase() : value?.name?.toLowerCase() ?? '';
+    return source.filter(item => item.name.toLowerCase().includes(term));
+  }
+
+  displayFn = (item: any): string => item?.name ?? '';
+
+  updateProfile(): void {
+    if (!this.signupForm.valid) {
+      this.notify.showError('Please fill all required fields correctly.');
       this.signupForm.markAllAsTouched();
+      return;
     }
+
+    const raw = this.signupForm.getRawValue();
+    const updatedUser: User = {
+      userId: this.userDetails()?.userId,
+      name: raw.name,
+      email: raw.email,
+      collegeId: raw.college.collegeId,
+      collegeName: raw.college.name,
+      universityId: raw.university.universityId,
+      universityName: raw.university.name,
+      branchId: raw.branch.branchId,
+      branchName: raw.branch.name,
+      yearId: raw.year.yearId,
+      yearName: raw.year.name,
+      semesterId: raw.semester.semesterId,
+      semesterName: raw.semester.name
+    };
+
+    this.store.dispatch(UserActions.updateUserProfile({ user: updatedUser }));
+    this.isEditMode.set(false);
   }
 
-  handleOptionFiltering() {
-    this.filteredColleges = this.signupForm.get('college')!.valueChanges.pipe(
-      startWith(''),
-      map((value) => this.filterColleges(value))
-    );
-
-    this.filteredUniversities = this.signupForm.get('university')!.valueChanges.pipe(
-      startWith(''),
-      map((value) => this.filterUniversities(value))
-    );
-
-    this.filteredBranches = this.signupForm.get('branch')!.valueChanges.pipe(
-      startWith(''),
-      map((value) => this.filterBranches(value))
-    );
-
-    this.filteredYears = this.signupForm.get('year')!.valueChanges.pipe(
-      startWith(''),
-      map((value) => this.filterYears(value))
-    );
-
-    this.filteredSemesters = this.signupForm.get('semester')!.valueChanges.pipe(
-      startWith(''),
-      map((value) => this.filterSemesters(value))
-    );
-  }
-
-  filterColleges(value: College | string): College[] {
-    const filterValue =
-      typeof value === 'string' ? value.toLowerCase() : value?.name?.toLowerCase() || '';
-    return this.colleges.filter((college) => college.name.toLowerCase().includes(filterValue));
-  }
-
-  filterSemesters(value: Semester | string): Semester[] {
-    const filterValue = typeof value === 'string' ? value.toLowerCase() : value?.name?.toLowerCase() || '';
-    return this.semisters.filter((semister) => semister.name.toLowerCase().includes(filterValue));
-  }
-
-  filterUniversities(value: University | string): University[] {
-    const filterValue =
-      typeof value === 'string' ? value.toLowerCase() : value?.name?.toLowerCase() || '';
-    return this.universities.filter((university) =>
-      university.name.toLowerCase().includes(filterValue)
-    );
-  }
-
-  filterBranches(value: Branch | string): Branch[] {
-    const filterValue = typeof value === 'string' ? value.toLowerCase() : value?.name?.toLowerCase() || '';
-    return this.branches.filter((branch) => branch.name.toLowerCase().includes(filterValue));
-  }
-
-  filterYears(value: Year | string): Year[] {
-    const filterValue =
-      typeof value === 'string' ? value.toLowerCase() : value?.name?.toLowerCase() || '';
-    return this.years.filter((year) => year.name.toLowerCase().includes(filterValue));
-  }
-
-  displayCollegeFn(college: College): string {
-    return college && college.name ? college.name : '';
-  }
-
-  displayUniversityFn(university: University): string {
-    return university && university.name ? university.name : '';
-  }
-
-  displayBranchFn(branch: Branch): string {
-    return branch && branch.name ? branch.name : '';
-  }
-
-  displayYearFn(year: Year): string {
-    return year && year.name ? year.name : '';
-  }
-
-  displaySemisterFn(semester: Semester): string {
-    return semester && semester.name ? semester.name : '';
-  }
-
-  closeProfilDrawer() {
+  closeProfilDrawer(): void {
     this.closeDrawer.emit();
   }
 
-  setEditMode() {
+  setEditMode(): void {
     this.isEditMode.set(!this.isEditMode());
   }
 }
