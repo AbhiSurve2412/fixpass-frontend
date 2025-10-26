@@ -140,4 +140,10 @@ body {
   .mdc-tab-indicator {
     display: none;
   }
+
+  .secondary-tooltip {
+    color: var(--fixpass-white);
+    background:  var(--fixpass-black);
+    border-radius: 0.5rem;
+  }
 }

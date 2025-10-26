@@ -4,5 +4,6 @@ export interface Subject {
     description? : string,
     yearId? : string,
     branchId: string,    
-    semesterId: string
+    semesterId: string,
+    shortCode : string
 }

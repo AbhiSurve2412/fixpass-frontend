@@ -7,8 +7,9 @@
     </div>
     <ul class="subject-list">
       @for (subject of subjects(); track subject; let i = $index) {
-      <li class="subject" [class.active]="selectedSubject() === subject" (click)="selectSubject(subject)">
-        {{ subject.name }}
+      <li class="subject" [class.active]="selectedSubject() === subject" matTooltipClass="secondary-tooltip" (click)="selectSubject(subject)"
+        [matTooltip]="subject.name" matTooltipPosition="right">
+        {{ isCollapsed() ? subject.shortCode : subject.name }}
       </li>
       }
     </ul>

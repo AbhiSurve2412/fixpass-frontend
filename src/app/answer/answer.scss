@@ -11,6 +11,8 @@
     max-height: calc(100vh - 9rem);
     overflow: auto;
     margin: 0.8rem 0;
+    user-select: none;
+    pointer-events: auto;
     h4 {
         font-size: 1.125rem;
         font-weight: 600;
