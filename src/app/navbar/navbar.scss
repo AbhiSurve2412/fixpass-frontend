@@ -10,7 +10,7 @@
   align-items: center;
   background-color: var(--fixpass-primary);
   color: var(--fixpass-white);
-  padding : 0.5rem 1rem;
+  padding: 0.5rem 1rem;
 
   .nav-bar-options {
     display: flex;
@@ -48,5 +48,18 @@
     font-size: 1.5rem;
     font-weight: 700;
     cursor: pointer;
-  }  
+  }
+}
+
+/* Mobile (max-width: 768px) */
+@media (max-width: 768px) {
+  .navbar {
+    .nav-bar-options {
+      button {
+        &.active {
+          height: 1.75rem;
+        }
+      }
+    }
+  }
 }

@@ -1,25 +1,35 @@
 <div class="study-material-container" [class.collapsed]="isCollapsed()">
   <div class="sidenav">
     <div class="collapse-button-container">
-      <button mat-icon-button (click)="toggleSidenav()">
-        <mat-icon>{{ isCollapsed() ? 'arrow_right' : 'arrow_left' }}</mat-icon>
-      </button>
+        <button mat-icon-button (click)="toggleSidenav()">
+          <mat-icon>{{ isCollapsed() ? 'arrow_right' : 'arrow_left' }}</mat-icon>
+        </button>
     </div>
-    <ul class="subject-list">
-      @for (subject of subjects(); track subject; let i = $index) {
-      <li class="subject" [class.active]="selectedSubject() === subject" matTooltipClass="secondary-tooltip" (click)="selectSubject(subject)"
-        [matTooltip]="subject.name" matTooltipPosition="right">
-        {{ isCollapsed() ? subject.shortCode : subject.name }}
-      </li>
-      }
-    </ul>
+    @if(!isMobile() || !isCollapsed()){
+      <ul class="subject-list">
+        @for (subject of subjects(); track subject; let i = $index) {
+        <li class="subject" [class.active]="selectedSubject() === subject" matTooltipClass="secondary-tooltip" (click)="selectSubject(subject)"
+          [matTooltip]="subject.name" matTooltipPosition="right">
+          {{ isCollapsed() || isMobile() ? subject.shortCode : subject.name }}
+        </li>
+        }
+      </ul>
+    }
   </div>
 
   <div class="sidenav-content" [class.collapsed]="isCollapsed()">
     <div class="units-list">
       <mat-tab-group mat-stretch-tabs="false" [selectedIndex]="selectedIndex" (selectedTabChange)="onTabChange($event)">
         @for (unit of filteredUnits(); track unit; let i = $index) {
-        <mat-tab [label]="unit.name">
+        <mat-tab>
+          <ng-template mat-tab-label>
+            <span
+              [matTooltip]="isMobile() ? unit.name : ''"
+              matTooltipClass="secondary-tooltip"
+              matTooltipPosition="above">
+              {{ isMobile() ? 'Unit - ' + unit.unitNumber : unit.name }}
+            </span>
+          </ng-template>
           <ng-template matTabContent>
             <div class="tab-content">
               @for(question of filteredQuestions(); track question; let i = $index){

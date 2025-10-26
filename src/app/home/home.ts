@@ -72,10 +72,7 @@ export class Home implements OnInit {
   isUserLoggedIn = toSignal(this.store.select(getIsAuthenticated));
   authLoading = toSignal(this.store.select(getIsLoading));
 
-  isLoading = computed(() => {
-    const userId = localStorage.getItem('userId');
-    return !userId && this.isUserLoggedIn();
-  });
+  isLoading = computed(() => this.authLoading());
 
   filteredColleges$!: Observable<any[]>;
   filteredUniversities$!: Observable<any[]>;

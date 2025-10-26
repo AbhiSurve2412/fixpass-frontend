@@ -21,6 +21,7 @@ import {
   getEngineeringQuestions,
   isQuestionsLoading,
 } from '../state/study-material/study-material.selectors';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 
 @Component({
   selector: 'app-study-material-sidenav',
@@ -39,7 +40,9 @@ import {
 export class StudyMaterialSidenav implements OnInit {
   private readonly store: Store = inject(Store);
   private dialog: MatDialog = inject(MatDialog);
+  private breakpointObserver = inject(BreakpointObserver);
 
+  isMobile = signal(false);
   userDetails = toSignal(this.store.select(getLoggedInUser));
 
   isCollapsed = signal(false);
@@ -72,6 +75,12 @@ export class StudyMaterialSidenav implements OnInit {
   }); 
 
   ngOnInit(): void {
+    this.breakpointObserver.observe([Breakpoints.Handset])
+    .subscribe(result => {
+      this.isMobile.set(result.matches);
+      this.isCollapsed.set(result.matches);
+    });
+
     const subjects = this.userSubjects(); 
     if (subjects?.length) {
       const firstSubject = subjects[0];

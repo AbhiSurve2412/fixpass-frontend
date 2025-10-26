@@ -1,18 +1,24 @@
 @use '../styles/theme' as *;
 
-.main-container{
-  .main-content { 
+.main-container {
+  .main-content {
     height: 100%;
     overflow-y: auto;
     overflow-x: hidden;
   }
 }
 
-.profile-drawer{
+.profile-drawer {
   width: 100%;
   height: 100%;
-  padding-left : 20rem;
+  padding-left: 20rem;
   background: transparent;
   backdrop-filter: blur(10px);
-}
+  transition: all 0.3s ease-in-out;
 
+  @media (max-width: 768px) {
+    padding-left: 0;
+    width: 100vw; 
+    backdrop-filter: blur(5px);
+  }
+}

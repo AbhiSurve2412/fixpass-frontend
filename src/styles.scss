@@ -146,4 +146,11 @@ body {
     background:  var(--fixpass-black);
     border-radius: 0.5rem;
   }
+
+  .disabled-field {
+    .mat-mdc-text-field-wrapper {
+      background-color:  $fixpass-gray-300;
+  }
+  }
+  
 }
