@@ -1,19 +1,19 @@
 <div class="study-material-container" [class.collapsed]="isCollapsed()">
   <div class="sidenav">
     <div class="collapse-button-container">
-        <button mat-icon-button (click)="toggleSidenav()">
-          <mat-icon>{{ isCollapsed() ? 'arrow_right' : 'arrow_left' }}</mat-icon>
-        </button>
+      <button mat-icon-button (click)="toggleSidenav()">
+        <mat-icon>{{ isCollapsed() ? 'arrow_right' : 'arrow_left' }}</mat-icon>
+      </button>
     </div>
     @if(!isMobile() || !isCollapsed()){
-      <ul class="subject-list">
-        @for (subject of subjects(); track subject; let i = $index) {
-        <li class="subject" [class.active]="selectedSubject() === subject" matTooltipClass="secondary-tooltip" (click)="selectSubject(subject)"
-          [matTooltip]="subject.name" matTooltipPosition="right">
-          {{ isCollapsed() || isMobile() ? subject.shortCode : subject.name }}
-        </li>
-        }
-      </ul>
+    <ul class="subject-list">
+      @for (subject of subjects(); track subject; let i = $index) {
+      <li class="subject" [class.active]="selectedSubject() === subject" matTooltipClass="secondary-tooltip"
+        (click)="selectSubject(subject, i)" [matTooltip]="subject.name" matTooltipPosition="right">
+        {{ isCollapsed() || isMobile() ? subject.shortCode : subject.name }}
+      </li>
+      }
+    </ul>
     }
   </div>
 
@@ -23,20 +23,27 @@
         @for (unit of filteredUnits(); track unit; let i = $index) {
         <mat-tab>
           <ng-template mat-tab-label>
-            <span
-              [matTooltip]="isMobile() ? unit.name : ''"
-              matTooltipClass="secondary-tooltip"
+            <span [matTooltip]="isMobile() ? unit.name : ''" matTooltipClass="secondary-tooltip"
               matTooltipPosition="above">
               {{ isMobile() ? 'Unit - ' + unit.unitNumber : unit.name }}
             </span>
           </ng-template>
           <ng-template matTabContent>
             <div class="tab-content">
-              @for(question of filteredQuestions(); track question; let i = $index){
+              @for (question of filteredQuestions(); track question; let q = $index) {
               <div class="tab-main-content">
                 <div class="question">
-                  <h4 class="question">{{i+1}}) {{ question.name }}</h4>
+                  <h4 class="question-title">{{ q + 1 }}) {{ question.name }}</h4>
+                  @if (userDetails()?.isProUser) {
                   <div class="options-container">
+                    <button mat-icon-button aria-label="Toggle Question Details"
+                      (click)="toggleQuestionDetails(question.questionId)"
+                      [matTooltip]="isDetailsVisible(question.questionId) ? 'Hide Question Details' : 'Show Question Details'">
+                      <mat-icon>
+                        {{ isDetailsVisible(question.questionId) ? 'expand_less' : 'info' }}
+                      </mat-icon>
+                    </button>
+
                     <button mat-icon-button aria-label="YouTube"
                       (click)="openYoutubeVideo('https://www.youtube.com/watch?v=47MGfydWVvA')">
                       <mat-icon matTooltip="Watch On YouTube">ondemand_video</mat-icon>
@@ -51,20 +58,33 @@
                       (click)="toggleAnswerMode(question.questionId)">
                       <mat-icon matTooltip="Original Version">restart_alt</mat-icon>
                     </button>
-                    }
-                    @else {
+                    } @else {
                     <button mat-icon-button aria-label="Simple Answer" (click)="toggleAnswerMode(question.questionId)">
                       <mat-icon matTooltip="Simple Version">lightbulb</mat-icon>
                     </button>
                     }
                   </div>
+                }
                 </div>
+                @if (isDetailsVisible(question.questionId)) {
+                <div class="question-details">
+                  <strong>Previously Asked Years : </strong>
+                  <span class="years">{{ getPreviouslyAskedYears(question) }}</span>
+                </div>
+                }
                 <app-answer [questionId]="question.questionId" [isSimple]="isSimpleAnswer(question.questionId)">
                 </app-answer>
               </div>
               }
+
+              @if (!userDetails()?.isProUser && !(selectedSubjectIndex === 0 && i === 0)) {
+              <div class="subscription-blur-container">
+                <app-subscription></app-subscription>
+              </div>
+              }
             </div>
           </ng-template>
+
         </mat-tab>
         }
       </mat-tab-group>

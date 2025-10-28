@@ -3,5 +3,9 @@ export interface Question {
     name : string,
     description? : string,
     answerId : string,
-    unitId : string
+    unitId : string,
+    previouslyAskedYears? : string[],
+    diagramUrl? : string,
+    priority : string
 }
+  

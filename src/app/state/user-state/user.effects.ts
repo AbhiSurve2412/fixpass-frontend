@@ -24,7 +24,7 @@ export class UserEffects {
           map((newUser) => {
             this.notification.showSuccess('Signup successful!');
             localStorage.setItem('userId', newUser.userId!);
-            this.router.navigate(['/study-material']);
+            this.router.navigate(['/home']);
             return UserActions.signUpSuccess({ user: newUser });
           }), 
           catchError((error: FirebaseError) => {

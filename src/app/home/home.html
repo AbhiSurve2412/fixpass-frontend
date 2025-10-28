@@ -1,21 +1,31 @@
 <div class="home-container">
   @if (isLoading()) {
-    <div class="spinner-container">
-      <mat-progress-spinner diameter="60" mode="indeterminate"></mat-progress-spinner>
-    </div>
+  <div class="spinner-container">
+    <mat-progress-spinner diameter="60" mode="indeterminate"></mat-progress-spinner>
+  </div>
   }
-  
+
 
   <!-- Info Section -->
   <div class="information-container">
-    <h1>Welcome to FixPass</h1>
+    <h1>Welcome to <span class="highlight">FixPass</span></h1>
     <p>
-      FixPass is your go-to platform designed specially for <strong>engineering students</strong>.
+      Your ultimate companion for <strong>engineering exam preparation</strong> — built to help you
+      <strong>study smart</strong> and <strong>pass with confidence</strong>.
     </p>
-    <p>📘 Access <strong>previous year question papers</strong> with detailed solutions.</p>
-    <p>🚀 Prepare smarter, focus on important topics, and get exam-ready in less time.</p>
-    <p>🎯 Whether it’s quick revision or deep understanding, FixPass has you covered.</p>
-  </div>
+  
+    <ul class="info-points">
+      <li>📘 Get access to <strong>Previous Year Question Papers (PYQs)</strong> with detailed, easy-to-understand answers.</li>
+      <li>🧩 Organized <strong>chapter-wise and subject-wise</strong> for smarter, faster learning.</li>
+      <li>📊 Backed by analysis — <strong>focus on the most asked and important questions</strong>.</li>
+      <li>🎓 Designed by toppers to ensure that if you study with FixPass, <strong>you’ll definitely pass your exams</strong>.</li>
+      <li>🚀 Perfect for <strong>quick revisions</strong> or <strong>deep conceptual study</strong> — your choice.</li>
+    </ul>
+  
+    <p class="closing-line">
+      Start your journey with FixPass today — <strong>Study Less, Score More!</strong> 💪
+    </p>
+  </div>  
 
   @if(!isUserLoggedIn()){
   <div class="form-container">
@@ -229,4 +239,8 @@
     }
   </div>
   }
+  @else {
+  <app-subscription></app-subscription>
+  }
+
 </div>

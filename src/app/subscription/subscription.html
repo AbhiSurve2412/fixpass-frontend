@@ -1,0 +1,58 @@
+<mat-card class="subscription-card">
+    <mat-card-header class="card-header">
+        <mat-card-title class="title">
+            <mat-icon>workspace_premium</mat-icon>
+            Subscription
+        </mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content class="card-content">
+        @if (userDetails()?.isProUser) {
+        <div class="status pro">
+            <div class="subscription-heading">
+                <mat-icon class="icon" color="primary">verified_user</mat-icon>
+                <h2>Premium Member</h2>
+            </div>
+            <p>🎉 Enjoy <strong>unlimited access</strong> to all subjects, PYQs.</p>
+        </div>
+        } @else {
+        <div class="status free">
+            <div class="subscription-heading">
+                <mat-icon class="icon" color="warn">lock</mat-icon>
+                <h2>Free Plan</h2>
+            </div>
+            <p>Limited to <strong>1 subject</strong> and <strong>1 unit</strong>.</p>
+
+            <div class="feature-list">
+                <div class="feature-column">
+                  <h3>Free Plan</h3>
+                  <ul>
+                    <li><mat-icon color="primary">check_circle</mat-icon> 1 Subject & 1 Unit Access</li>
+                    <li><mat-icon color="warn">cancel</mat-icon> View Question Details</li>
+                    <li><mat-icon color="warn">cancel</mat-icon> Watch YouTube Explanations</li>
+                    <li><mat-icon color="warn">cancel</mat-icon> Cheat Notes Access</li>
+                    <li><mat-icon color="warn">cancel</mat-icon> Simple Answer Toggle</li>
+                    <li><mat-icon color="warn">cancel</mat-icon> All Subjects & Units</li>
+                  </ul>
+                </div>
+              
+                <div class="feature-column">
+                  <h3>Pro Plan</h3>
+                  <ul>
+                    <li><mat-icon color="primary">check_circle</mat-icon> All Subjects & Units</li>
+                    <li><mat-icon color="primary">check_circle</mat-icon> View Question Details</li>
+                    <li><mat-icon color="primary">check_circle</mat-icon> Watch YouTube Explanations</li>
+                    <li><mat-icon color="primary">check_circle</mat-icon> Cheat Notes Access</li>
+                    <li><mat-icon color="primary">check_circle</mat-icon> Simple Answer Toggle</li>
+                  </ul>
+                </div>
+              </div>
+              
+            <button mat-raised-button class="snake-border-btn" (click)="startPayment()">
+                Upgrade to Premium – ₹99
+            </button>
+        </div>
+
+        }
+    </mat-card-content>
+</mat-card>

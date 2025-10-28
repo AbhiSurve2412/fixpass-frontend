@@ -4,7 +4,8 @@
   display: flex;
   gap: 1rem;
   align-items: flex-start;
-  height: calc(100vh - 3rem);
+  height: calc(100vh - 6rem);
+  margin: 0.5rem;
 }
 
 .information-container {
@@ -102,6 +103,7 @@
   .home-container {
     flex-direction: column;
     gap: 0.8rem;
+    align-items: center;
   }
 
   .information-container,

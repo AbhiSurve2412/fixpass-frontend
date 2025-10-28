@@ -22,6 +22,7 @@ import {
   isQuestionsLoading,
 } from '../state/study-material/study-material.selectors';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { Subscription } from '../subscription/subscription';
 
 @Component({
   selector: 'app-study-material-sidenav',
@@ -32,7 +33,8 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
     MatIconModule,
     MatTabsModule,
     Answer,
-    MatTooltipModule
+    MatTooltipModule,
+    Subscription,
   ],
   templateUrl: './study-material-sidenav.html',
   styleUrl: './study-material-sidenav.scss',
@@ -42,29 +44,36 @@ export class StudyMaterialSidenav implements OnInit {
   private dialog: MatDialog = inject(MatDialog);
   private breakpointObserver = inject(BreakpointObserver);
 
+  // Signals
   isMobile = signal(false);
-  userDetails = toSignal(this.store.select(getLoggedInUser));
-
   isCollapsed = signal(false);
-  selectedSubject = signal<Subject | null>(null);
-  selectedUnit = signal<Unit | null>(null);
 
+  userDetails = toSignal(this.store.select(getLoggedInUser));
   subjects = toSignal(this.store.select(getEngineeringSubjects), { initialValue: [] });
   units = toSignal(this.store.select(getEngineeringUnits), { initialValue: [] });
   questions = toSignal(this.store.select(getEngineeringQuestions), { initialValue: [] });
-
   subjectsLoading = toSignal(this.store.select(isSubjectsLoading), { initialValue: false });
   unitsLoading = toSignal(this.store.select(isUnitsLoading), { initialValue: false });
   questionsLoading = toSignal(this.store.select(isQuestionsLoading), { initialValue: false });
 
+  selectedSubject = signal<Subject | null>(null);
+  selectedUnit = signal<Unit | null>(null);
+
   selectedIndex = 0;
-  questionAnswerMode = signal(new Map<string, boolean>());
+  selectedSubjectIndex = 0;
 
   filteredQuestions = signal<Question[]>([]);
   filteredUnits = signal<Unit[]>([]);
+
+  // Existing toggle: simple/original answer
+  questionAnswerMode = signal(new Map<string, boolean>());
+
+  // 🆕 New toggle: question details visibility
+  questionDetailsVisibility = signal(new Map<string, boolean>());
+
   userSubjects = computed(() => {
-    const subjects = this.subjects(); 
-    const user = this.userDetails(); 
+    const subjects = this.subjects();
+    const user = this.userDetails();
     if (!subjects?.length || !user) return [];
     return subjects.filter(
       s =>
@@ -72,28 +81,26 @@ export class StudyMaterialSidenav implements OnInit {
         s.semesterId === user.semesterId &&
         s.yearId === user.yearId
     );
-  }); 
+  });
 
   ngOnInit(): void {
-    this.breakpointObserver.observe([Breakpoints.Handset])
-    .subscribe(result => {
+    this.breakpointObserver.observe([Breakpoints.Handset]).subscribe(result => {
       this.isMobile.set(result.matches);
       this.isCollapsed.set(result.matches);
     });
 
-    const subjects = this.userSubjects(); 
+    const subjects = this.userSubjects();
     if (subjects?.length) {
       const firstSubject = subjects[0];
       this.selectedSubject.set(firstSubject);
       this.updateUnitsAndQuestions(firstSubject);
     }
-    
   }
 
   updateUnitsAndQuestions(subject: Subject): void {
     const subjectUnits = this.units().filter(u => u.subjectId === subject.subjectId);
-    this.filteredUnits.set(subjectUnits); 
-  
+    this.filteredUnits.set(subjectUnits);
+
     if (subjectUnits.length > 0) {
       this.selectedUnit.set(subjectUnits[0]);
       this.updateQuestions(subjectUnits[0]);
@@ -112,9 +119,10 @@ export class StudyMaterialSidenav implements OnInit {
     this.isCollapsed.set(!this.isCollapsed());
   }
 
-  selectSubject(subject: Subject): void {
+  selectSubject(subject: Subject, index: number): void {
     this.selectedSubject.set(subject);
     this.selectedIndex = 0;
+    this.selectedSubjectIndex = index;
     this.updateUnitsAndQuestions(subject);
   }
 
@@ -122,8 +130,8 @@ export class StudyMaterialSidenav implements OnInit {
     this.selectedIndex = event.index;
     const subject = this.selectedSubject();
     if (!subject) return;
-  
-    const unit = this.filteredUnits()[event.index]; 
+
+    const unit = this.filteredUnits()[event.index];
     if (unit) {
       this.selectedUnit.set(unit);
       this.updateQuestions(unit);
@@ -145,7 +153,7 @@ export class StudyMaterialSidenav implements OnInit {
   getEmbedUrl(url: string): string {
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
     const match = url.match(regExp);
-    const videoId = (match && match[2].length === 11) ? match[2] : null;
+    const videoId = match && match[2].length === 11 ? match[2] : null;
     return videoId ? `https://www.youtube.com/embed/${videoId}` : url;
   }
 
@@ -159,4 +167,28 @@ export class StudyMaterialSidenav implements OnInit {
   isSimpleAnswer(questionId: string): boolean {
     return this.questionAnswerMode().get(questionId) || false;
   }
+
+  toggleQuestionDetails(questionId: string): void {
+    const currentMap = new Map(this.questionDetailsVisibility());
+    const currentValue = currentMap.get(questionId) || false;
+    currentMap.set(questionId, !currentValue);
+    this.questionDetailsVisibility.set(currentMap);
+  }
+
+  isDetailsVisible(questionId: string): boolean {
+    return this.questionDetailsVisibility().get(questionId) || false;
+  }
+
+  getPreviouslyAskedYears(question: Question): string {
+    const years = question.previouslyAskedYears;
+    if (!years || years.length === 0) {
+      return 'N/A';
+    }
+  
+    if (Array.isArray(years)) {
+      return years.join(', ');
+    }
+  
+    return String(years);
+  }  
 }

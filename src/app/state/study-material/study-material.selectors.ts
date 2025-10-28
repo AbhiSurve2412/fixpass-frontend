@@ -73,8 +73,11 @@ export const isSubjectsLoading = createSelector(
 // Units
 export const getEngineeringUnits = createSelector(
   selectStudyMaterialState,
-  (state) => state.units
+  (state) => {
+    return [...state.units].sort((a, b) => a.unitNumber - b.unitNumber);
+  }
 );
+
 
 export const isUnitsLoading = createSelector(
   selectStudyMaterialState,
@@ -84,7 +87,21 @@ export const isUnitsLoading = createSelector(
 // Questions
 export const getEngineeringQuestions = createSelector(
   selectStudyMaterialState,
-  (state) => state.questions
+  (state) => {
+    if (!state.questions) return [];
+
+    const priorityOrder: Record<'high' | 'medium' | 'low', number> = {
+      high: 1,
+      medium: 2,
+      low: 3,
+    };
+
+    return [...state.questions].sort((a, b) => {
+      const pA = priorityOrder[(a.priority?.toLowerCase() as 'high' | 'medium' | 'low') || 'low'];
+      const pB = priorityOrder[(b.priority?.toLowerCase() as 'high' | 'medium' | 'low') || 'low'];
+      return pA - pB;
+    });
+  }
 );
 
 export const isQuestionsLoading = createSelector(

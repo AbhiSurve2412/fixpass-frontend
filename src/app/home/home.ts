@@ -12,7 +12,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { NotificationService } from '../shared/services/notification.service';
 import { Store } from '@ngrx/store';
-import { getIsAuthenticated, getIsLoading } from '../state/user-state/user.selectors';
+import { getIsAuthenticated, getIsLoading, getLoggedInUser } from '../state/user-state/user.selectors';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
   getEngineeringYears,
@@ -28,7 +28,8 @@ import {
 } from '../state/study-material/study-material.selectors';
 import { User } from '../state/user-state/user.model';
 import { UserActions } from '../state/user-state/user.actions';
-
+import { MatCardModule } from '@angular/material/card';
+import { Subscription } from '../subscription/subscription';
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -43,6 +44,8 @@ import { UserActions } from '../state/user-state/user.actions';
     CommonModule,
     MatIconModule,
     MatProgressSpinnerModule,
+    MatCardModule,
+    Subscription
   ],
   templateUrl: './home.html',
   styleUrls: ['./home.scss'],
@@ -71,6 +74,7 @@ export class Home implements OnInit {
 
   isUserLoggedIn = toSignal(this.store.select(getIsAuthenticated));
   authLoading = toSignal(this.store.select(getIsLoading));
+  userDetails = toSignal(this.store.select(getLoggedInUser));
 
   isLoading = computed(() => this.authLoading());
 
@@ -174,6 +178,7 @@ export class Home implements OnInit {
       yearName: raw.year.name,
       semesterId: raw.semester.semesterId,
       semesterName: raw.semester.name,
+      isProUser : false
     };
     this.store.dispatch(UserActions.signUpWithEmailAndPassword({ user, password: raw.password }));
   }
@@ -198,6 +203,7 @@ export class Home implements OnInit {
       yearName: raw.year?.name,
       semesterId: raw.semester?.semesterId,
       semesterName: raw.semester?.name,
+      isProUser : false
     };
     this.store.dispatch(UserActions.signUpWithGoogle({ user, isLoginForm }));
   }
